@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from lfx.components.logic.conditional_router import ConditionalRouterComponent
     from lfx.components.logic.data_conditional_router import DataConditionalRouterComponent
     from lfx.components.logic.flow_tool import FlowToolComponent
+    from lfx.components.logic.inference_time_scaling import InferenceTimeScalingComponent
     from lfx.components.logic.llm_conditional_router import SmartRouterComponent
     from lfx.components.logic.loop import LoopComponent
     from lfx.components.logic.pass_message import PassMessageComponent
@@ -18,6 +19,7 @@ _dynamic_imports = {
     "ConditionalRouterComponent": "conditional_router",
     "DataConditionalRouterComponent": "data_conditional_router",
     "FlowToolComponent": "flow_tool",
+    "InferenceTimeScalingComponent": "inference_time_scaling",
     "LoopComponent": "loop",
     "PassMessageComponent": "pass_message",
     "RunFlowComponent": "run_flow",
@@ -29,6 +31,7 @@ __all__ = [
     "ConditionalRouterComponent",
     "DataConditionalRouterComponent",
     "FlowToolComponent",
+    "InferenceTimeScalingComponent",
     "LoopComponent",
     "PassMessageComponent",
     "RunFlowComponent",
