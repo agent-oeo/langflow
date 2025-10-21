@@ -84,9 +84,9 @@ class BestOfN:
 
         # Log all generated responses
         if self.logger_fn:
-            self.logger_fn("\n" + "="*80)
+            self.logger_fn("\n" + "=" * 80)
             self.logger_fn("1. GENERATED RESPONSES")
-            self.logger_fn("="*80)
+            self.logger_fn("=" * 80)
             for i, response in enumerate(responses, 1):
                 self.logger_fn(f"\n--- Response {i} ---")
                 self.logger_fn(response.text)
@@ -104,9 +104,9 @@ class BestOfN:
 
         # Log final selection
         if self.logger_fn:
-            self.logger_fn("\n" + "="*80)
+            self.logger_fn("\n" + "=" * 80)
             self.logger_fn("FINAL SELECTION")
-            self.logger_fn("="*80)
+            self.logger_fn("=" * 80)
             for i, score in enumerate(scores, 1):
                 marker = " 🏆 SELECTED" if i - 1 == selected_index else ""
                 self.logger_fn(f"Response {i}: Score {score:.1f}/100{marker}")
@@ -183,9 +183,9 @@ Do not include any other text or explanation."""
 
         # Log the judge prompt
         if self.logger_fn:
-            self.logger_fn("\n" + "="*80)
+            self.logger_fn("\n" + "=" * 80)
             self.logger_fn("2. JUDGE PROMPT")
-            self.logger_fn("="*80)
+            self.logger_fn("=" * 80)
             self.logger_fn(judge_prompt)
 
         # Query judge LLM
@@ -198,9 +198,9 @@ Do not include any other text or explanation."""
 
         # Log the judge response
         if self.logger_fn:
-            self.logger_fn("\n" + "="*80)
+            self.logger_fn("\n" + "=" * 80)
             self.logger_fn("3. JUDGE RESPONSE")
-            self.logger_fn("="*80)
+            self.logger_fn("=" * 80)
             self.logger_fn(judge_result.text)
 
         # Parse the scores
@@ -248,7 +248,7 @@ Do not include any other text or explanation."""
             else:
                 # If parsing completely fails, assign equal scores
                 if self.logger_fn:
-                    self.logger_fn(f"⚠️ Failed to parse judge scores, assigning default scores")
+                    self.logger_fn("⚠️ Failed to parse judge scores, assigning default scores")
                 scores = [50.0] * expected_count
 
         return scores

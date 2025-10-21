@@ -3,8 +3,6 @@ import random
 from typing import Any
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import BaseMessage
-from langchain_core.runnables import RunnableConfig
 from pydantic import ConfigDict
 
 from lfx.base.models.model import LCModelComponent
@@ -14,6 +12,7 @@ from lfx.io import BoolInput, DropdownInput, HandleInput, IntInput, MessageInput
 from lfx.schema.dotdict import dotdict
 from lfx.schema.message import Message
 from lfx.template.field.base import Output
+from lfx.utils.async_helpers import run_until_complete
 
 
 class InferenceTimeScalingWrapper(BaseChatModel):
@@ -23,6 +22,11 @@ class InferenceTimeScalingWrapper(BaseChatModel):
 
     base_model: Any  # Use Any to avoid Pydantic validation issues
     budget: int = 3
+    algorithm: str = "Best-of-N"
+    judge_llm: Any = None  # Only needed for Best-of-N
+    top_n: int = 1  # Only needed for Best-of-N
+    get_chat_result_fn: Any = None  # Function to call the model
+    logger_fn: Any = None  # Function to log messages
 
     def _generate(self, messages, stop=None, run_manager=None, **kwargs):
         """Generate multiple responses and select one randomly."""
@@ -44,11 +48,90 @@ class InferenceTimeScalingWrapper(BaseChatModel):
         # Return a random response
         return random.choice(responses)
 
+    def invoke(self, input, config=None, **kwargs):
+        """Invoke the model multiple times and select response based on algorithm."""
+        return run_until_complete(self.ainvoke(input, config=config, **kwargs))
+
+    async def ainvoke(self, input, config=None, **kwargs):
+        """Async invoke: generate multiple responses and select based on algorithm."""
+        if self.algorithm == "Best-of-N" and self.judge_llm and self.get_chat_result_fn:
+            # Use Best-of-N algorithm
+            best_of_n = BestOfN(
+                judge_llm=self.judge_llm,
+                get_chat_result_fn=self.get_chat_result_fn,
+                logger_fn=self.logger_fn,
+            )
+
+            # Generate responses in parallel
+            tasks = [
+                self.base_model.ainvoke(input, config=config, **kwargs)
+                for _ in range(self.budget)
+            ]
+            responses = await asyncio.gather(*tasks)
+
+            # Convert responses to Message objects if needed
+            from langchain_core.messages import AIMessage
+            messages = []
+            for resp in responses:
+                if isinstance(resp, AIMessage):
+                    msg = Message(text=resp.content if hasattr(resp, 'content') else str(resp))
+                elif isinstance(resp, Message):
+                    msg = resp
+                else:
+                    msg = Message(text=str(resp))
+                messages.append(msg)
+
+            # Score and select best response
+            # Extract input text for scoring
+            input_text = str(input)
+            if hasattr(input, 'content'):
+                input_text = input.content
+            elif isinstance(input, list) and len(input) > 0:
+                # LangChain messages format
+                input_text = str(input[-1])
+
+            scores = await best_of_n._score_responses(messages, input_text, conversation_history=None)
+
+            # Select top response
+            scored_responses = list(enumerate(scores))
+            scored_responses.sort(key=lambda x: x[1], reverse=True)
+            selected_index = scored_responses[0][0]
+
+            return responses[selected_index]
+        else:
+            # Self-Consistency: generate responses in parallel and select randomly
+            responses = []
+            for _ in range(self.budget):
+                response = await self.base_model.ainvoke(input, config=config, **kwargs)
+                responses.append(response)
+            return random.choice(responses)
+
     def bind_tools(self, tools, **kwargs):
         """Delegate tool binding to the base model."""
         # Return a new wrapper with the base model that has tools bound
         bound_base = self.base_model.bind_tools(tools, **kwargs)
-        return InferenceTimeScalingWrapper(base_model=bound_base, budget=self.budget)
+        return InferenceTimeScalingWrapper(
+            base_model=bound_base,
+            budget=self.budget,
+            algorithm=self.algorithm,
+            judge_llm=self.judge_llm,
+            top_n=self.top_n,
+            get_chat_result_fn=self.get_chat_result_fn,
+            logger_fn=self.logger_fn,
+        )
+
+    def with_config(self, config=None, **kwargs):
+        """Delegate config binding to the base model."""
+        configured_base = self.base_model.with_config(config=config, **kwargs)
+        return InferenceTimeScalingWrapper(
+            base_model=configured_base,
+            budget=self.budget,
+            algorithm=self.algorithm,
+            judge_llm=self.judge_llm,
+            top_n=self.top_n,
+            get_chat_result_fn=self.get_chat_result_fn,
+            logger_fn=self.logger_fn,
+        )
 
     @property
     def _llm_type(self) -> str:
@@ -143,11 +226,17 @@ class InferenceTimeScalingComponent(LCModelComponent):
             The wrapped language model that applies inference-time scaling.
         """
         budget = max(1, int(self.budget))
+        top_n = max(1, int(getattr(self, "top_n", 1)))
 
         # Wrap the language model with inference-time scaling
         wrapped_model = InferenceTimeScalingWrapper(
             base_model=self.language_model,
             budget=budget,
+            algorithm=self.algorithm,
+            judge_llm=self.judge_llm if self.algorithm == "Best-of-N" else None,
+            top_n=top_n,
+            get_chat_result_fn=self.get_chat_result,
+            logger_fn=self.log,
         )
 
         return wrapped_model
@@ -175,6 +264,7 @@ class InferenceTimeScalingComponent(LCModelComponent):
             if hasattr(self, "graph") and hasattr(self.graph, "get_messages"):
                 try:
                     conversation_history = self.graph.get_messages()
+                    self.log(f"Conversation history: {conversation_history}")
                 except Exception:
                     pass  # If we can't get history, continue without it
 
@@ -229,7 +319,6 @@ class InferenceTimeScalingComponent(LCModelComponent):
             self.status = f"Selected 1 response from {budget} generations (Self-Consistency)"
 
         return selected_response
-
 
     def update_build_config(self, build_config: dotdict, field_value: str, field_name: str | None = None) -> dotdict:
         """Update build configuration based on algorithm selection."""
