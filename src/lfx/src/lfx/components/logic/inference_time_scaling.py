@@ -1,3 +1,4 @@
+import asyncio
 import random
 from typing import Any
 
@@ -7,6 +8,7 @@ from langchain_core.runnables import RunnableConfig
 from pydantic import ConfigDict
 
 from lfx.base.models.model import LCModelComponent
+from lfx.components.logic.best_of_n import BestOfN
 from lfx.field_typing import LanguageModel
 from lfx.io import BoolInput, DropdownInput, HandleInput, IntInput, MessageInput, MultilineInput
 from lfx.schema.dotdict import dotdict
@@ -90,8 +92,8 @@ class InferenceTimeScalingComponent(LCModelComponent):
         DropdownInput(
             name="algorithm",
             display_name="Algorithm",
-            options=["Self-Consistency", "Best-of-N"],
-            value="Self-Consistency",
+            options=["Best-of-N", "Self-Consistency"],
+            value="Best-of-N",
             info="The inference-time scaling algorithm to use.",
             real_time_refresh=True,
             advanced=False,
@@ -99,18 +101,26 @@ class InferenceTimeScalingComponent(LCModelComponent):
         IntInput(
             name="budget",
             display_name="Budget",
-            info="Number of times to call the model. A random response from all calls will be returned.",
+            info="Number of responses to generate in parallel. The best response will be selected based on the algorithm.",
             value=3,
             advanced=False,
+        ),
+        IntInput(
+            name="top_n",
+            display_name="Top N",
+            info="Number of top-scoring responses to consider (Best-of-N only). Default is 1 (best only).",
+            value=1,
+            advanced=True,
+            show=False,  # Hidden by default, shown when Best-of-N is selected
         ),
         HandleInput(
             name="judge_llm",
             display_name="Judge LLM",
             input_types=["LanguageModel"],
             info="The language model to use for judging responses (Best-of-N only).",
-            required=False,
+            required=True,
             advanced=False,
-            show=False,  # Hidden by default
+            show=True,  # Shown by default since Best-of-N is default
         ),
         BoolInput(
             name="stream",
@@ -151,93 +161,87 @@ class InferenceTimeScalingComponent(LCModelComponent):
         Returns:
             Message object containing the selected model response.
         """
-        model = self.build_model()
         budget = max(1, int(self.budget))  # Ensure budget is at least 1
         algorithm = self.algorithm
 
-        # Generate multiple responses
-        responses = []
-        for i in range(budget):
-            result = await self.get_chat_result(
-                runnable=model,
-                stream=False,  # Disable streaming for multiple calls
-                input_value=self.input_value,
-                system_message=self.system_message,
-            )
-            responses.append(result)
-            self.status = f"Generated {i + 1}/{budget} responses"
-
         # Select response based on algorithm
         if algorithm == "Best-of-N" and self.judge_llm:
-            selected_response = await self._select_best_of_n(responses)
+            # Use BestOfN algorithm with parallel async generation
+            top_n = max(1, int(getattr(self, "top_n", 1)))  # Default to 1 if not set
+            self.log(f"🚀 Starting Best-of-N with budget={budget}, top_n={top_n}")
+
+            # Get conversation history if available
+            conversation_history = None
+            if hasattr(self, "graph") and hasattr(self.graph, "get_messages"):
+                try:
+                    conversation_history = self.graph.get_messages()
+                except Exception:
+                    pass  # If we can't get history, continue without it
+
+            best_of_n = BestOfN(
+                judge_llm=self.judge_llm,
+                get_chat_result_fn=self.get_chat_result,
+                logger_fn=self.log,  # Pass the log function for detailed logging
+            )
+
+            self.status = f"Generating {budget} responses in parallel..."
+
+            selected_response = await best_of_n.ainfer(
+                lm=self.language_model,
+                input_value=self.input_value,
+                system_message=self.system_message,
+                budget=budget,
+                top_n=top_n,
+                conversation_history=conversation_history,
+                return_response_only=True,
+            )
+
+            self.log(f"✅ Best-of-N completed. Selected best response from top {top_n} of {budget} generations")
+            self.status = f"Selected best response from {budget} generations (Best-of-N)"
         else:
-            # Self-Consistency: random selection
-            selected_response = random.choice(responses)
+            # Self-Consistency: generate responses in parallel and select randomly
+            self.log(f"🚀 Starting Self-Consistency with budget={budget}")
+            self.status = f"Generating {budget} responses in parallel..."
+
+            tasks = [
+                self.get_chat_result(
+                    runnable=self.language_model,
+                    stream=False,
+                    input_value=self.input_value,
+                    system_message=self.system_message,
+                )
+                for _ in range(budget)
+            ]
+
+            responses = await asyncio.gather(*tasks)
+
+            # Log all generated responses
+            self.log(f"✅ Generated {len(responses)} responses")
+            for i, response in enumerate(responses, 1):
+                preview = response.text[:200] + "..." if len(response.text) > 200 else response.text
+                self.log(f"Response {i}: {preview}")
+
+            # Random selection
+            selected_idx = random.randint(0, len(responses) - 1)
+            selected_response = responses[selected_idx]
+
+            self.log(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)")
             self.status = f"Selected 1 response from {budget} generations (Self-Consistency)"
 
         return selected_response
 
-    async def _select_best_of_n(self, responses: list[Message]) -> Message:
-        """Use a judge LLM to select the best response from multiple candidates.
-
-        Args:
-            responses: List of Message objects to judge
-
-        Returns:
-            The best Message according to the judge LLM
-        """
-        if len(responses) == 1:
-            return responses[0]
-
-        # Create evaluation prompt
-        candidates_text = "\n\n".join(
-            [f"Response {i + 1}:\n{resp.text}" for i, resp in enumerate(responses)]
-        )
-
-        judge_prompt = f"""You are an expert evaluator. Your task is to select the best response from the following candidates based on quality, accuracy, and helpfulness.
-
-Original Question: {self.input_value}
-
-{candidates_text}
-
-Analyze each response and select the best one. Reply with only the number (1, 2, 3, etc.) of the best response."""
-
-        # Query judge LLM
-        judge_result = await self.get_chat_result(
-            runnable=self.judge_llm,
-            stream=False,
-            input_value=judge_prompt,
-            system_message="You are a helpful judge that evaluates responses objectively.",
-        )
-
-        # Parse the judge's selection
-        judge_text = judge_result.text.strip()
-        try:
-            # Try to extract a number from the judge's response
-            import re
-
-            numbers = re.findall(r"\d+", judge_text)
-            if numbers:
-                selected_idx = int(numbers[0]) - 1
-                if 0 <= selected_idx < len(responses):
-                    self.status = f"Selected response {selected_idx + 1}/{len(responses)} via Best-of-N judge"
-                    return responses[selected_idx]
-        except (ValueError, IndexError):
-            pass
-
-        # Fallback to first response if parsing fails
-        self.status = f"Judge selection failed, using first response from {len(responses)} generations"
-        return responses[0]
 
     def update_build_config(self, build_config: dotdict, field_value: str, field_name: str | None = None) -> dotdict:
         """Update build configuration based on algorithm selection."""
         if field_name == "algorithm":
-            # Show/hide Judge LLM based on algorithm
+            # Show/hide Judge LLM and Top N based on algorithm
             if field_value == "Best-of-N":
                 build_config["judge_llm"]["show"] = True
                 build_config["judge_llm"]["required"] = True
+                build_config["top_n"]["show"] = True
             else:
                 build_config["judge_llm"]["show"] = False
                 build_config["judge_llm"]["required"] = False
+                build_config["top_n"]["show"] = False
 
         return build_config
