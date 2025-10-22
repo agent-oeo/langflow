@@ -24,6 +24,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
     budget: int = 3
     algorithm: str = "Best-of-N"
     judge_llm: Any = None  # Only needed for Best-of-N
+    judge_system_message: str | None = None  # Optional custom system message for judge
     top_n: int = 1  # Only needed for Best-of-N
     get_chat_result_fn: Any = None  # Function to call the model
     logger_fn: Any = None  # Function to log messages
@@ -56,25 +57,47 @@ class InferenceTimeScalingWrapper(BaseChatModel):
         """Async invoke: generate multiple responses and select based on algorithm."""
         if self.algorithm == "Best-of-N" and self.judge_llm and self.get_chat_result_fn:
             # Use Best-of-N algorithm
+            print(f"\n🚀 Starting Best-of-N with budget={self.budget}, top_n={self.top_n}")
+
             best_of_n = BestOfN(
                 judge_llm=self.judge_llm,
                 get_chat_result_fn=self.get_chat_result_fn,
                 logger_fn=self.logger_fn,
+                judge_system_message=self.judge_system_message,
             )
 
             # Generate responses in parallel
-            tasks = [
-                self.base_model.ainvoke(input, config=config, **kwargs)
-                for _ in range(self.budget)
-            ]
+            tasks = [self.base_model.ainvoke(input, config=config, **kwargs) for _ in range(self.budget)]
             responses = await asyncio.gather(*tasks)
 
             # Convert responses to Message objects if needed
             from langchain_core.messages import AIMessage
+            import json
+
             messages = []
+            print("Generated responses:")
             for resp in responses:
+                print(resp, "\n")
                 if isinstance(resp, AIMessage):
-                    msg = Message(text=resp.content if hasattr(resp, 'content') else str(resp))
+                    # Extract text content
+                    text_content = resp.content if hasattr(resp, "content") else str(resp)
+
+                    # If there are tool calls, include ONLY THE FIRST ONE in the text for judging
+                    # We only want to judge the initial tool call decision, not subsequent calls
+                    if hasattr(resp, "tool_calls") and resp.tool_calls:
+                        tc = resp.tool_calls[0]  # Only take the first tool call
+                        # tc can be a dict or a ToolCall object
+                        if isinstance(tc, dict):
+                            name = tc.get('name', 'unknown')
+                            args = tc.get('args', {})
+                        else:
+                            name = getattr(tc, 'name', 'unknown')
+                            args = getattr(tc, 'args', {})
+
+                        tool_call_text = f"\n{name}({json.dumps(args, indent=2)})\n"
+                        text_content = str(text_content) + tool_call_text
+
+                    msg = Message(text=text_content)
                 elif isinstance(resp, Message):
                     msg = resp
                 else:
@@ -84,7 +107,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             # Score and select best response
             # Extract input text for scoring
             input_text = str(input)
-            if hasattr(input, 'content'):
+            if hasattr(input, "content"):
                 input_text = input.content
             elif isinstance(input, list) and len(input) > 0:
                 # LangChain messages format
@@ -97,14 +120,23 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             scored_responses.sort(key=lambda x: x[1], reverse=True)
             selected_index = scored_responses[0][0]
 
+            print(f"✅ Best-of-N completed. Selected best response from top {self.top_n} of {self.budget} generations\n")
+
             return responses[selected_index]
         else:
             # Self-Consistency: generate responses in parallel and select randomly
+            print(f"\n🚀 Starting Self-Consistency with budget={self.budget}")
+
             responses = []
             for _ in range(self.budget):
                 response = await self.base_model.ainvoke(input, config=config, **kwargs)
                 responses.append(response)
-            return random.choice(responses)
+
+            selected_idx = random.randint(0, len(responses) - 1)
+
+            print(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)\n")
+
+            return responses[selected_idx]
 
     def bind_tools(self, tools, **kwargs):
         """Delegate tool binding to the base model."""
@@ -115,6 +147,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             budget=self.budget,
             algorithm=self.algorithm,
             judge_llm=self.judge_llm,
+            judge_system_message=self.judge_system_message,
             top_n=self.top_n,
             get_chat_result_fn=self.get_chat_result_fn,
             logger_fn=self.logger_fn,
@@ -128,6 +161,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             budget=self.budget,
             algorithm=self.algorithm,
             judge_llm=self.judge_llm,
+            judge_system_message=self.judge_system_message,
             top_n=self.top_n,
             get_chat_result_fn=self.get_chat_result_fn,
             logger_fn=self.logger_fn,
@@ -205,6 +239,13 @@ class InferenceTimeScalingComponent(LCModelComponent):
             advanced=False,
             show=True,  # Shown by default since Best-of-N is default
         ),
+        MultilineInput(
+            name="judge_system_message",
+            display_name="Judge System Message",
+            info="Custom system message for the judge LLM. Leave empty to use the default: 'You are an objective response evaluator. Provide only numeric scores in the requested format.'",
+            advanced=True,
+            show=True,  # Shown by default since Best-of-N is default
+        ),
         BoolInput(
             name="stream",
             display_name="Stream",
@@ -228,12 +269,18 @@ class InferenceTimeScalingComponent(LCModelComponent):
         budget = max(1, int(self.budget))
         top_n = max(1, int(getattr(self, "top_n", 1)))
 
+        # Get custom judge system message if provided
+        judge_sys_msg = getattr(self, "judge_system_message", None)
+        if judge_sys_msg:
+            judge_sys_msg = judge_sys_msg.strip()
+
         # Wrap the language model with inference-time scaling
         wrapped_model = InferenceTimeScalingWrapper(
             base_model=self.language_model,
             budget=budget,
             algorithm=self.algorithm,
             judge_llm=self.judge_llm if self.algorithm == "Best-of-N" else None,
+            judge_system_message=judge_sys_msg if judge_sys_msg else None,
             top_n=top_n,
             get_chat_result_fn=self.get_chat_result,
             logger_fn=self.log,
@@ -257,21 +304,25 @@ class InferenceTimeScalingComponent(LCModelComponent):
         if algorithm == "Best-of-N" and self.judge_llm:
             # Use BestOfN algorithm with parallel async generation
             top_n = max(1, int(getattr(self, "top_n", 1)))  # Default to 1 if not set
-            self.log(f"🚀 Starting Best-of-N with budget={budget}, top_n={top_n}")
 
             # Get conversation history if available
             conversation_history = None
             if hasattr(self, "graph") and hasattr(self.graph, "get_messages"):
                 try:
                     conversation_history = self.graph.get_messages()
-                    self.log(f"Conversation history: {conversation_history}")
                 except Exception:
                     pass  # If we can't get history, continue without it
+
+            # Get custom judge system message if provided
+            judge_sys_msg = getattr(self, "judge_system_message", None)
+            if judge_sys_msg:
+                judge_sys_msg = judge_sys_msg.strip()
 
             best_of_n = BestOfN(
                 judge_llm=self.judge_llm,
                 get_chat_result_fn=self.get_chat_result,
-                logger_fn=self.log,  # Pass the log function for detailed logging
+                logger_fn=None,  # No component logging, only print statements
+                judge_system_message=judge_sys_msg if judge_sys_msg else None,
             )
 
             self.status = f"Generating {budget} responses in parallel..."
@@ -286,11 +337,9 @@ class InferenceTimeScalingComponent(LCModelComponent):
                 return_response_only=True,
             )
 
-            self.log(f"✅ Best-of-N completed. Selected best response from top {top_n} of {budget} generations")
             self.status = f"Selected best response from {budget} generations (Best-of-N)"
         else:
             # Self-Consistency: generate responses in parallel and select randomly
-            self.log(f"🚀 Starting Self-Consistency with budget={budget}")
             self.status = f"Generating {budget} responses in parallel..."
 
             tasks = [
@@ -305,17 +354,10 @@ class InferenceTimeScalingComponent(LCModelComponent):
 
             responses = await asyncio.gather(*tasks)
 
-            # Log all generated responses
-            self.log(f"✅ Generated {len(responses)} responses")
-            for i, response in enumerate(responses, 1):
-                preview = response.text[:200] + "..." if len(response.text) > 200 else response.text
-                self.log(f"Response {i}: {preview}")
-
             # Random selection
             selected_idx = random.randint(0, len(responses) - 1)
             selected_response = responses[selected_idx]
 
-            self.log(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)")
             self.status = f"Selected 1 response from {budget} generations (Self-Consistency)"
 
         return selected_response
@@ -323,14 +365,16 @@ class InferenceTimeScalingComponent(LCModelComponent):
     def update_build_config(self, build_config: dotdict, field_value: str, field_name: str | None = None) -> dotdict:
         """Update build configuration based on algorithm selection."""
         if field_name == "algorithm":
-            # Show/hide Judge LLM and Top N based on algorithm
+            # Show/hide Judge LLM, Judge System Message, and Top N based on algorithm
             if field_value == "Best-of-N":
                 build_config["judge_llm"]["show"] = True
                 build_config["judge_llm"]["required"] = True
+                build_config["judge_system_message"]["show"] = True
                 build_config["top_n"]["show"] = True
             else:
                 build_config["judge_llm"]["show"] = False
                 build_config["judge_llm"]["required"] = False
+                build_config["judge_system_message"]["show"] = False
                 build_config["top_n"]["show"] = False
 
         return build_config

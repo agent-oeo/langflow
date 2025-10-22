@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
@@ -10,6 +11,27 @@ from lfx.schema.message import Message
 
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
+
+
+def format_message_with_tool_calls(msg: Message) -> str:
+    """Format a message including any tool calls for display/judging.
+
+    Args:
+        msg: Message object that may contain tool call information
+
+    Returns:
+        Formatted string with text and tool calls
+    """
+    text = msg.text or ""
+
+    # Check if message has tool call information in properties or content_blocks
+    # This is a best-effort attempt to extract tool calls from Langflow Messages
+    formatted = str(text)
+
+    # TODO: Once Langflow Message schema supports tool_calls natively, extract them here
+    # For now, we rely on the text content which should include tool calls if properly converted
+
+    return formatted
 
 
 @dataclass
@@ -33,17 +55,29 @@ class BestOfN:
     and select the best response.
     """
 
-    def __init__(self, judge_llm: BaseChatModel, get_chat_result_fn: Any, logger_fn: Any = None) -> None:
+    def __init__(
+        self,
+        judge_llm: BaseChatModel,
+        get_chat_result_fn: Any,
+        logger_fn: Any = None,
+        judge_system_message: str | None = None,
+    ) -> None:
         """Initialize Best-of-N algorithm.
 
         Args:
             judge_llm: Language model to use for judging/scoring responses
             get_chat_result_fn: Async function to get chat results from a model
             logger_fn: Optional function to log messages to component logs
+            judge_system_message: Optional custom system message for the judge. If None, uses default.
         """
         self.judge_llm = judge_llm
         self.get_chat_result_fn = get_chat_result_fn
         self.logger_fn = logger_fn
+        self.judge_system_message = (
+            judge_system_message
+            if judge_system_message
+            else "You are an objective response evaluator. Provide only numeric scores in the requested format."
+        )
 
     async def ainfer(
         self,
@@ -82,15 +116,6 @@ class BestOfN:
 
         responses = await asyncio.gather(*tasks)
 
-        # Log all generated responses
-        if self.logger_fn:
-            self.logger_fn("\n" + "=" * 80)
-            self.logger_fn("1. GENERATED RESPONSES")
-            self.logger_fn("=" * 80)
-            for i, response in enumerate(responses, 1):
-                self.logger_fn(f"\n--- Response {i} ---")
-                self.logger_fn(response.text)
-
         # Score responses using judge LLM (all at once in a single prompt)
         scores = await self._score_responses(responses, input_value, conversation_history)
 
@@ -101,15 +126,6 @@ class BestOfN:
 
         # Primary selection is the best one
         selected_index = top_indices[0]
-
-        # Log final selection
-        if self.logger_fn:
-            self.logger_fn("\n" + "=" * 80)
-            self.logger_fn("FINAL SELECTION")
-            self.logger_fn("=" * 80)
-            for i, score in enumerate(scores, 1):
-                marker = " 🏆 SELECTED" if i - 1 == selected_index else ""
-                self.logger_fn(f"Response {i}: Score {score:.1f}/100{marker}")
 
         # Return the result
         result = BestOfNResult(
@@ -152,11 +168,12 @@ class BestOfN:
                 sender = getattr(msg, "sender", "Unknown")
                 history_context += f"**{sender}**: {msg.text}\n"
             history_context += "\n"
-
+    
         # Build the judge prompt with all responses
         responses_text = ""
         for i, response in enumerate(responses, 1):
-            responses_text += f"\n### Response {i}:\n{response.text}\n"
+            formatted_resp = format_message_with_tool_calls(response)
+            responses_text += f"\n### Response {i}:\n{formatted_resp}\n"
 
         judge_prompt = f"""You are an expert evaluator. Your task is to evaluate multiple responses to a question and assign each a quality score from 0-100.
 
@@ -166,7 +183,11 @@ Consider the following criteria:
 - Clarity and coherence
 - Relevance to the question and conversation context
 
-{history_context}## Current Question:
+
+## Conversation History:
+{history_context}
+
+## Current Question:
 {input_text}
 
 ## Responses to Evaluate:
@@ -182,26 +203,24 @@ Response 3: [score]
 Do not include any other text or explanation."""
 
         # Log the judge prompt
-        if self.logger_fn:
-            self.logger_fn("\n" + "=" * 80)
-            self.logger_fn("2. JUDGE PROMPT")
-            self.logger_fn("=" * 80)
-            self.logger_fn(judge_prompt)
+        print("\n" + "=" * 80)
+        print("2. JUDGE PROMPT")
+        print("=" * 80)
+        print(judge_prompt)
 
         # Query judge LLM
         judge_result = await self.get_chat_result_fn(
             runnable=self.judge_llm,
             stream=False,
             input_value=judge_prompt,
-            system_message="You are an objective response evaluator. Provide only numeric scores in the requested format.",
+            system_message=self.judge_system_message,
         )
 
         # Log the judge response
-        if self.logger_fn:
-            self.logger_fn("\n" + "=" * 80)
-            self.logger_fn("3. JUDGE RESPONSE")
-            self.logger_fn("=" * 80)
-            self.logger_fn(judge_result.text)
+        print("\n" + "=" * 80)
+        print("3. JUDGE RESPONSE")
+        print("=" * 80)
+        print(judge_result.text)
 
         # Parse the scores
         scores = self._parse_judge_scores(judge_result.text, len(responses))
@@ -247,8 +266,7 @@ Do not include any other text or explanation."""
                         scores.append(0.0)
             else:
                 # If parsing completely fails, assign equal scores
-                if self.logger_fn:
-                    self.logger_fn("⚠️ Failed to parse judge scores, assigning default scores")
+                print("⚠️ Failed to parse judge scores, assigning default scores")
                 scores = [50.0] * expected_count
 
         return scores
