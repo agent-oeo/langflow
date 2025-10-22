@@ -157,6 +157,23 @@ class BestOfN:
         # Extract text from original input
         if isinstance(original_input, Message):
             input_text = original_input.text
+        elif hasattr(original_input, 'content'):
+            # LangChain message - extract content
+            content = original_input.content
+            # If content is a list (multi-modal), extract text
+            if isinstance(content, list):
+                content = ' '.join([item.get('text', str(item)) if isinstance(item, dict) else str(item) for item in content])
+            input_text = str(content)
+
+            # If AI message with tool calls, append tool call info
+            if hasattr(original_input, 'tool_calls') and original_input.tool_calls:
+                import json
+                tool_calls_text = "\n[Tool Calls]:\n"
+                for tc in original_input.tool_calls:
+                    tc_name = tc.get('name', 'unknown') if isinstance(tc, dict) else getattr(tc, 'name', 'unknown')
+                    tc_args = tc.get('args', {}) if isinstance(tc, dict) else getattr(tc, 'args', {})
+                    tool_calls_text += f"  - {tc_name}({json.dumps(tc_args)})\n"
+                input_text += tool_calls_text
         else:
             input_text = str(original_input)
 
@@ -165,8 +182,48 @@ class BestOfN:
         if conversation_history and len(conversation_history) > 0:
             history_context = "\n## Conversation History:\n"
             for msg in conversation_history:
-                sender = getattr(msg, "sender", "Unknown")
-                history_context += f"**{sender}**: {msg.text}\n"
+                # Handle both LangChain messages (content) and Langflow messages (text)
+                if hasattr(msg, 'content'):
+                    # LangChain message - extract content
+                    content = msg.content
+                    # If content is a list (multi-modal), extract text
+                    if isinstance(content, list):
+                        content = ' '.join([item.get('text', str(item)) if isinstance(item, dict) else str(item) for item in content])
+                    msg_text = str(content)
+
+                    # Get role from message type
+                    msg_type = type(msg).__name__
+                    if 'System' in msg_type:
+                        sender = "System"
+                    elif 'Human' in msg_type or 'User' in msg_type:
+                        sender = "User"
+                    elif 'Tool' in msg_type:
+                        sender = "Tool"
+                        # For tool messages, also include tool name if available
+                        if hasattr(msg, 'name') and msg.name:
+                            sender = f"Tool ({msg.name})"
+                    elif 'AI' in msg_type or 'Assistant' in msg_type:
+                        sender = "Assistant"
+                        # For AI messages with tool calls, append tool call info
+                        if hasattr(msg, 'tool_calls') and msg.tool_calls:
+                            import json
+                            tool_calls_text = "\n[Tool Calls]:\n"
+                            for tc in msg.tool_calls:
+                                tc_name = tc.get('name', 'unknown') if isinstance(tc, dict) else getattr(tc, 'name', 'unknown')
+                                tc_args = tc.get('args', {}) if isinstance(tc, dict) else getattr(tc, 'args', {})
+                                tool_calls_text += f"  - {tc_name}({json.dumps(tc_args)})\n"
+                            msg_text += tool_calls_text
+                    else:
+                        sender = "Unknown"
+                elif hasattr(msg, 'text'):
+                    # Langflow Message object
+                    msg_text = msg.text
+                    sender = getattr(msg, "sender", "Unknown")
+                else:
+                    msg_text = str(msg)
+                    sender = "Unknown"
+
+                history_context += f"**{sender}**: {msg_text}\n"
             history_context += "\n"
     
         # Build the judge prompt with all responses
@@ -175,19 +232,19 @@ class BestOfN:
             formatted_resp = format_message_with_tool_calls(response)
             responses_text += f"\n### Response {i}:\n{formatted_resp}\n"
 
-        judge_prompt = f"""You are an expert evaluator. Your task is to evaluate multiple responses to a question and assign each a quality score from 0-100.
+        judge_prompt = f"""You are an expert evaluator. Your task is to evaluate multiple responses to a message and assign each a quality score from 0-100.
 
 Consider the following criteria:
 - Accuracy and correctness
 - Helpfulness and completeness
 - Clarity and coherence
-- Relevance to the question and conversation context
+- Relevance to the message and conversation context
 
 
 ## Conversation History:
 {history_context}
 
-## Current Question:
+## Current Message:
 {input_text}
 
 ## Responses to Evaluate:

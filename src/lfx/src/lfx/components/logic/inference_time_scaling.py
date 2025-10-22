@@ -55,88 +55,55 @@ class InferenceTimeScalingWrapper(BaseChatModel):
 
     async def ainvoke(self, input, config=None, **kwargs):
         """Async invoke: generate multiple responses and select based on algorithm."""
-        if self.algorithm == "Best-of-N" and self.judge_llm and self.get_chat_result_fn:
-            # Use Best-of-N algorithm
-            print(f"\n🚀 Starting Best-of-N with budget={self.budget}, top_n={self.top_n}")
+        # Handle ChatPromptValue objects (they have a messages attribute)
+        if hasattr(input, 'messages'):
+            input = input.messages
 
-            best_of_n = BestOfN(
-                judge_llm=self.judge_llm,
-                get_chat_result_fn=self.get_chat_result_fn,
-                logger_fn=self.logger_fn,
-                judge_system_message=self.judge_system_message,
-            )
+        # Extract conversation history (0 to n-1) from input if it's a list
+        conversation_history = []
+        if isinstance(input, list) and len(input) > 1:
+            conversation_history = input[:-1]
 
-            # Generate responses in parallel
-            tasks = [self.base_model.ainvoke(input, config=config, **kwargs) for _ in range(self.budget)]
-            responses = await asyncio.gather(*tasks)
-
-            # Convert responses to Message objects if needed
+        # Define generator function that converts LangChain responses to Messages
+        async def generate_one(input_val):
             from langchain_core.messages import AIMessage
             import json
 
-            messages = []
-            print("Generated responses:")
-            for resp in responses:
-                print(resp, "\n")
-                if isinstance(resp, AIMessage):
-                    # Extract text content
-                    text_content = resp.content if hasattr(resp, "content") else str(resp)
+            resp = await self.base_model.ainvoke(input_val, config=config, **kwargs)
 
-                    # If there are tool calls, include ONLY THE FIRST ONE in the text for judging
-                    # We only want to judge the initial tool call decision, not subsequent calls
-                    if hasattr(resp, "tool_calls") and resp.tool_calls:
-                        tc = resp.tool_calls[0]  # Only take the first tool call
-                        # tc can be a dict or a ToolCall object
-                        if isinstance(tc, dict):
-                            name = tc.get('name', 'unknown')
-                            args = tc.get('args', {})
-                        else:
-                            name = getattr(tc, 'name', 'unknown')
-                            args = getattr(tc, 'args', {})
+            # Convert to Message with tool calls
+            if isinstance(resp, AIMessage):
+                text_content = resp.content if hasattr(resp, "content") else str(resp)
 
-                        tool_call_text = f"\n{name}({json.dumps(args, indent=2)})\n"
-                        text_content = str(text_content) + tool_call_text
+                # Include only the first tool call for judging
+                if hasattr(resp, "tool_calls") and resp.tool_calls:
+                    tc = resp.tool_calls[0]
+                    name = tc.get('name', 'unknown') if isinstance(tc, dict) else getattr(tc, 'name', 'unknown')
+                    args = tc.get('args', {}) if isinstance(tc, dict) else getattr(tc, 'args', {})
+                    tool_call_text = f"\n{name}({json.dumps(args, indent=2)})\n"
+                    text_content = str(text_content) + tool_call_text
 
-                    msg = Message(text=text_content)
-                elif isinstance(resp, Message):
-                    msg = resp
-                else:
-                    msg = Message(text=str(resp))
-                messages.append(msg)
+                return Message(text=text_content), resp
+            elif isinstance(resp, Message):
+                return resp, resp
+            else:
+                return Message(text=str(resp)), resp
 
-            # Score and select best response
-            # Extract input text for scoring
-            input_text = str(input)
-            if hasattr(input, "content"):
-                input_text = input.content
-            elif isinstance(input, list) and len(input) > 0:
-                # LangChain messages format
-                input_text = str(input[-1])
+        # Use shared ITS algorithm (import needed to avoid circular dependency)
+        from lfx.components.logic.inference_time_scaling import InferenceTimeScalingComponent
+        selected_response, _ = await InferenceTimeScalingComponent._run_its_algorithm(
+            algorithm=self.algorithm,
+            budget=self.budget,
+            top_n=self.top_n,
+            judge_llm=self.judge_llm,
+            judge_system_message=self.judge_system_message,
+            get_chat_result_fn=self.get_chat_result_fn,
+            generate_fn=generate_one,
+            input_data=input,
+            conversation_history=conversation_history,
+        )
 
-            scores = await best_of_n._score_responses(messages, input_text, conversation_history=None)
-
-            # Select top response
-            scored_responses = list(enumerate(scores))
-            scored_responses.sort(key=lambda x: x[1], reverse=True)
-            selected_index = scored_responses[0][0]
-
-            print(f"✅ Best-of-N completed. Selected best response from top {self.top_n} of {self.budget} generations\n")
-
-            return responses[selected_index]
-        else:
-            # Self-Consistency: generate responses in parallel and select randomly
-            print(f"\n🚀 Starting Self-Consistency with budget={self.budget}")
-
-            responses = []
-            for _ in range(self.budget):
-                response = await self.base_model.ainvoke(input, config=config, **kwargs)
-                responses.append(response)
-
-            selected_idx = random.randint(0, len(responses) - 1)
-
-            print(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)\n")
-
-            return responses[selected_idx]
+        return selected_response
 
     def bind_tools(self, tools, **kwargs):
         """Delegate tool binding to the base model."""
@@ -260,6 +227,86 @@ class InferenceTimeScalingComponent(LCModelComponent):
         Output(display_name="Language Model", name="model_output", method="build_model"),
     ]
 
+    @staticmethod
+    async def _run_its_algorithm(
+        algorithm: str,
+        budget: int,
+        top_n: int,
+        judge_llm,
+        judge_system_message: str | None,
+        get_chat_result_fn,
+        generate_fn,
+        input_data,
+        conversation_history=None,
+    ):
+        """Shared helper to run ITS algorithm (Best-of-N or Self-Consistency).
+
+        Args:
+            algorithm: "Best-of-N" or "Self-Consistency"
+            budget: Number of responses to generate
+            top_n: Top N responses to consider (Best-of-N only)
+            judge_llm: Judge model (Best-of-N only)
+            judge_system_message: Custom judge system message
+            get_chat_result_fn: Function to call judge LLM
+            generate_fn: Async function that generates a single response
+            input_data: Input for generation (varies by context)
+            conversation_history: Conversation history for Best-of-N judging
+
+        Returns:
+            Selected response and list of Message objects (for judging)
+        """
+        if algorithm == "Best-of-N" and judge_llm:
+            print(f"\n🚀 Starting Best-of-N with budget={budget}, top_n={top_n}")
+
+            best_of_n = BestOfN(
+                judge_llm=judge_llm,
+                get_chat_result_fn=get_chat_result_fn,
+                logger_fn=None,
+                judge_system_message=judge_system_message,
+            )
+
+            # Generate responses in parallel
+            tasks = [generate_fn(input_data) for _ in range(budget)]
+            results = await asyncio.gather(*tasks)
+
+            # results is a list of (Message, original_response) tuples
+            messages = [r[0] for r in results]
+            responses = [r[1] for r in results]
+
+            # Extract current message from input_data
+            current_message = input_data
+            if isinstance(input_data, list) and len(input_data) > 0:
+                current_message = input_data[-1]
+
+            # Score and select
+            print("Messages:", messages)
+            print("Current message:", current_message)
+            print("Current message Type:", type(current_message))
+            print("Conversation history:", conversation_history)
+            scores = await best_of_n._score_responses(messages, current_message, conversation_history=conversation_history)
+            scored_responses = list(enumerate(scores))
+            scored_responses.sort(key=lambda x: x[1], reverse=True)
+            selected_index = scored_responses[0][0]
+
+            print(f"✅ Best-of-N completed. Selected best response from top {top_n} of {budget} generations\n")
+            return responses[selected_index], messages
+        else:
+            # Self-Consistency
+            print(f"\n🚀 Starting Self-Consistency with budget={budget}")
+
+            results = []
+            for _ in range(budget):
+                result = await generate_fn(input_data)
+                results.append(result)
+
+            messages = [r[0] for r in results]
+            responses = [r[1] for r in results]
+
+            selected_idx = random.randint(0, len(responses) - 1)
+            print(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)\n")
+
+            return responses[selected_idx], messages
+
     def build_model(self) -> LanguageModel:
         """Return the language model wrapped with inference-time scaling.
 
@@ -300,66 +347,46 @@ class InferenceTimeScalingComponent(LCModelComponent):
         budget = max(1, int(self.budget))  # Ensure budget is at least 1
         algorithm = self.algorithm
 
-        # Select response based on algorithm
-        if algorithm == "Best-of-N" and self.judge_llm:
-            # Use BestOfN algorithm with parallel async generation
-            top_n = max(1, int(getattr(self, "top_n", 1)))  # Default to 1 if not set
+        # Get conversation history if available
+        conversation_history = None
+        if hasattr(self, "graph") and hasattr(self.graph, "get_messages"):
+            try:
+                conversation_history = self.graph.get_messages()
+            except Exception:
+                pass  # If we can't get history, continue without it
 
-            # Get conversation history if available
-            conversation_history = None
-            if hasattr(self, "graph") and hasattr(self.graph, "get_messages"):
-                try:
-                    conversation_history = self.graph.get_messages()
-                except Exception:
-                    pass  # If we can't get history, continue without it
+        # Get custom judge system message if provided
+        judge_sys_msg = getattr(self, "judge_system_message", None)
+        if judge_sys_msg:
+            judge_sys_msg = judge_sys_msg.strip()
 
-            # Get custom judge system message if provided
-            judge_sys_msg = getattr(self, "judge_system_message", None)
-            if judge_sys_msg:
-                judge_sys_msg = judge_sys_msg.strip()
-
-            best_of_n = BestOfN(
-                judge_llm=self.judge_llm,
-                get_chat_result_fn=self.get_chat_result,
-                logger_fn=None,  # No component logging, only print statements
-                judge_system_message=judge_sys_msg if judge_sys_msg else None,
-            )
-
-            self.status = f"Generating {budget} responses in parallel..."
-
-            selected_response = await best_of_n.ainfer(
-                lm=self.language_model,
+        # Define generator function for component context
+        async def generate_one(_input_data):
+            msg = await self.get_chat_result(
+                runnable=self.language_model,
+                stream=False,
                 input_value=self.input_value,
                 system_message=self.system_message,
-                budget=budget,
-                top_n=top_n,
-                conversation_history=conversation_history,
-                return_response_only=True,
             )
+            return msg, msg  # Return (Message, Message) tuple
 
-            self.status = f"Selected best response from {budget} generations (Best-of-N)"
-        else:
-            # Self-Consistency: generate responses in parallel and select randomly
-            self.status = f"Generating {budget} responses in parallel..."
+        # Use shared ITS algorithm
+        self.status = f"Generating {budget} responses in parallel..."
 
-            tasks = [
-                self.get_chat_result(
-                    runnable=self.language_model,
-                    stream=False,
-                    input_value=self.input_value,
-                    system_message=self.system_message,
-                )
-                for _ in range(budget)
-            ]
+        top_n = max(1, int(getattr(self, "top_n", 1)))
+        selected_response, _ = await self._run_its_algorithm(
+            algorithm=algorithm,
+            budget=budget,
+            top_n=top_n,
+            judge_llm=self.judge_llm,
+            judge_system_message=judge_sys_msg,
+            get_chat_result_fn=self.get_chat_result,
+            generate_fn=generate_one,
+            input_data=self.input_value,
+            conversation_history=conversation_history,
+        )
 
-            responses = await asyncio.gather(*tasks)
-
-            # Random selection
-            selected_idx = random.randint(0, len(responses) - 1)
-            selected_response = responses[selected_idx]
-
-            self.status = f"Selected 1 response from {budget} generations (Self-Consistency)"
-
+        self.status = f"Selected best response from {budget} generations ({algorithm})"
         return selected_response
 
     def update_build_config(self, build_config: dotdict, field_value: str, field_name: str | None = None) -> dotdict:
