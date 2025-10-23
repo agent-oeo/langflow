@@ -53,7 +53,7 @@ class ComputeScoreComponent(Component):
         """Evaluate the conversation history and return the score."""
         print('evaluate_conversation: Starting evaluation')
         conversation_history = self.conversation_history
-        print('formatted conversation history:', self._format_conversation_history(conversation_history))
+        # print('formatted conversation history:', self._format_conversation_history(conversation_history))
         ground_truth_hash = self.ground_truth_message.text
         actual_hash_str = self.get_actual_hash_str()
         reward = 1 if actual_hash_str == ground_truth_hash else 0

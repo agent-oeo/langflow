@@ -72,20 +72,28 @@ class UserSimulatorComponent(Component):
     ]
 
     def _convert_lfx_message_to_lc_message(self, message: Message) -> BaseMessage:
+        print(f"Converting LFX message to LC message: {message.text[:50]}...")
         if message.sender == MESSAGE_SENDER_USER:
+            print("Converting to HumanMessage")
             return HumanMessage(content=message.text)
         else:
+            print("Converting to AIMessage")
             return AIMessage(content=message.text)
 
     async def call_user_agent(self, conversation: list[Message]) -> Message:
+        print(f"Calling user agent with conversation of {len(conversation)} messages")
         # swap sender from user to assistant and vice versa for messages in the conversation
         swapped_conversation: list[Message] = []
         for message in conversation:
+            print(f"Processing message from {message.sender}: {message.text[:30]}...")
             if message.sender == MESSAGE_SENDER_USER:
+                print("Swapping USER to AI")
                 swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))
             else:
+                print("Swapping AI to USER")
                 swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER))
         
+        print(f"Swapped conversation has {len(swapped_conversation)} messages")
         # call the user agent with the swapped conversation
         # user agent is AgentExecutor
         args: dict[str, Any] = {
@@ -93,33 +101,53 @@ class UserSimulatorComponent(Component):
             "chat_history": [self._convert_lfx_message_to_lc_message(message) for message in swapped_conversation[:-1]],
             "input": swapped_conversation[-1].text,
         }
+        print(f"Calling user agent with args: system_prompt length={len(self.task_scenario)}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...")
         result = await self.user_agent.ainvoke(args)
+        print(f"User agent result: {result['output'][:100]}...")
         return Message(text=result["output"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)
 
     async def call_assistant_agent(self, conversation: list[Message]) -> Message:
+        print(f"Calling assistant agent with conversation of {len(conversation)} messages")
         # call assistant agent with the conversation
         args: dict[str, Any] = {
             "system_prompt": self.assistant_system_prompt,
             "chat_history": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],
             "input": conversation[-1].text,
         }
+        print(f"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...")
         result = await self.assistant_agent.ainvoke(args)
+        print(f"Assistant agent result: {result['output'][:100]}...")
         return Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)
 
     async def conversation(self) -> list[Message]:
+        print("Starting conversation simulation")
         # reset the env
+        print("Resetting environment via HTTP request")
         response = requests.post("http://localhost:8001/reload")
         if response.status_code != 200:
+            print(f"Failed to reset env, status code: {response.status_code}")
             raise Exception("Failed to reset the env")
+        print("Environment reset successful")
+        
         # get first user message
+        print("Getting first user message")
         user_message = await self.call_user_agent([Message(text="Hi! How can I help you today?", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])
+        print(f"First user message: {user_message.text[:100]}...")
         self.conversation = [user_message]
+        
+        print(f"Starting conversation loop for {self.max_turns} turns")
         for i in range(self.max_turns):
+            print(f"Turn {i+1}/{self.max_turns}")
             assistant_message = await self.call_assistant_agent(self.conversation)
+            print(f"Assistant response: {assistant_message.text[:100]}...")
             self.conversation.append(assistant_message)
+            
             user_message = await self.call_user_agent(self.conversation)
+            print(f"User response: {user_message.text[:100]}...")
             if user_message.text == "###STOP###":
+                print("User sent stop signal, ending conversation")
                 break
             self.conversation.append(user_message)
 
+        print(f"Conversation completed with {len(self.conversation)} total messages")
         return self.conversation
