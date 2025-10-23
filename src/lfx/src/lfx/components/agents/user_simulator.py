@@ -62,7 +62,7 @@ class UserSimulatorComponent(Component):
             display_name="Assistant Turns",
             value=3,
             info="Maximum number of assistant responses to generate after the greeting.",
-            range_spec=RangeSpec(min=1, max=10, step_type="int"),
+            range_spec=RangeSpec(min=1, max=50, step_type="int"),
         ),
     ]
 
