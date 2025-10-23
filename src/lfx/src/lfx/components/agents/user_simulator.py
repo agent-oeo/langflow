@@ -68,7 +68,7 @@ class UserSimulatorComponent(Component):
     ]
 
     outputs = [
-        Output(display_name="Conversation", name="conversation", method="conversation"),
+        Output(display_name="Conversation", name="conversation", method="create_conversation"),
     ]
 
     def _convert_lfx_message_to_lc_message(self, message: Message) -> BaseMessage:
@@ -119,7 +119,7 @@ class UserSimulatorComponent(Component):
         print(f"Assistant agent result: {result['output'][:100]}...")
         return Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)
 
-    async def conversation(self) -> list[Message]:
+    async def create_conversation(self) -> list[Message]:
         print("Starting conversation simulation")
         # reset the env
         print("Resetting environment via HTTP request")
