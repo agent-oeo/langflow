@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from lfx.components.logic.pass_message import PassMessageComponent
     from lfx.components.logic.run_flow import RunFlowComponent
     from lfx.components.logic.sub_flow import SubFlowComponent
+    from lfx.components.logic.compute_score import ComputeScoreComponent
 
 _dynamic_imports = {
     "ConditionalRouterComponent": "conditional_router",
@@ -25,6 +26,7 @@ _dynamic_imports = {
     "RunFlowComponent": "run_flow",
     "SmartRouterComponent": "llm_conditional_router",
     "SubFlowComponent": "sub_flow",
+    "ComputeScoreComponent": "compute_score",
 }
 
 __all__ = [
@@ -37,6 +39,7 @@ __all__ = [
     "RunFlowComponent",
     "SmartRouterComponent",
     "SubFlowComponent",
+    "ComputeScoreComponent",
 ]
 
 
