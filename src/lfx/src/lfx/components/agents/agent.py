@@ -166,8 +166,34 @@ class AgentComponent(ToolCallingAgentComponent):
         ),
     ]
     outputs = [
+        Output(name="agent", display_name="Agent", method="build_agent", types=["Agent", "AgentExecutor"]),
         Output(name="response", display_name="Response", method="message_response"),
     ]
+
+    async def build_agent(self):
+        try:
+            llm_model, self.chat_history, self.tools = await self.get_agent_requirements()
+            # Set up and run agent
+            self.set(
+                llm=llm_model,
+                tools=self.tools or [],
+                chat_history=self.chat_history,
+                input_value=self.input_value,
+                system_prompt=self.system_prompt,
+            )
+            agent = self.create_agent_runnable()
+        except (ValueError, TypeError, KeyError) as e:
+            await logger.aerror(f"{type(e).__name__}: {e!s}")
+            raise
+        except ExceptionWithMessageError as e:
+            await logger.aerror(f"ExceptionWithMessageError occurred: {e}")
+            raise
+        # Avoid catching blind Exception; let truly unexpected exceptions propagate
+        except Exception as e:
+            await logger.aerror(f"Unexpected error: {e!s}")
+            raise
+        else:
+            return agent
 
     async def get_agent_requirements(self):
         """Get the agent requirements for the agent."""
