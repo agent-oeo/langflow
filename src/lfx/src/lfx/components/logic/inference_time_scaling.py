@@ -256,6 +256,13 @@ class InferenceTimeScalingComponent(LCModelComponent):
         Returns:
             Selected response and list of Message objects (for judging)
         """
+        # If budget is 1, skip judging and return the single response
+        if budget == 1:
+            print("\n⚡ Budget is 1, generating single response (no judging needed)")
+            result = await generate_fn(input_data)
+            message, response = result
+            return response, [message]
+
         if algorithm == "Best-of-N" and judge_llm:
             print(f"\n🚀 Starting Best-of-N with budget={budget}, top_n={top_n}")
 
