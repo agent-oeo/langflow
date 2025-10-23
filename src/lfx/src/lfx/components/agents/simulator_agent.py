@@ -34,13 +34,13 @@ def set_advanced_true(component_input):
     return component_input
 
 
-class AgentComponent(ToolCallingAgentComponent):
-    display_name: str = "Agent"
+class SimulatorAgentComponent(ToolCallingAgentComponent):
+    display_name: str = "Simulator Agent"
     description: str = "Define the agent's instructions, then enter a task to complete using tools."
     documentation: str = "https://docs.langflow.org/agents"
     icon = "bot"
     beta = False
-    name = "Agent"
+    name = "SimulatorAgent"
 
     memory_inputs = [set_advanced_true(component_input) for component_input in MemoryComponent().inputs]
 
@@ -162,12 +162,36 @@ class AgentComponent(ToolCallingAgentComponent):
             display_name="Current Date",
             advanced=True,
             info="If true, will add a tool to the agent that returns the current date.",
-            value=True,
+            value=False,
         ),
     ]
     outputs = [
-        Output(name="response", display_name="Response", method="message_response"),
+        Output(name="agent", display_name="Agent", method="build_agent", types=["Agent", "AgentExecutor"]),
     ]
+
+    async def build_agent(self):
+        try:
+            llm_model, self.chat_history, self.tools = await self.get_agent_requirements()
+            print(self.tools)
+            self.set(
+                llm=llm_model,
+                tools=self.tools or [],
+                chat_history=self.chat_history,
+                input_value=self.input_value,
+                system_prompt=self.system_prompt,
+            )
+            agent_executor = super().build_agent()
+            # setattr(agent_executor, "_lfx_default_system_prompt", self.system_prompt)
+            return agent_executor
+        except (ValueError, TypeError, KeyError) as e:
+            await logger.aerror(f"{type(e).__name__}: {e!s}")
+            raise
+        except ExceptionWithMessageError as e:
+            await logger.aerror(f"ExceptionWithMessageError occurred: {e}")
+            raise
+        except Exception as e:
+            await logger.aerror(f"Unexpected error: {e!s}")
+            raise
 
     async def get_agent_requirements(self):
         """Get the agent requirements for the agent."""
@@ -193,36 +217,6 @@ class AgentComponent(ToolCallingAgentComponent):
                 raise TypeError(msg)
             self.tools.append(current_date_tool)
         return llm_model, self.chat_history, self.tools
-
-    async def message_response(self) -> Message:
-        try:
-            llm_model, self.chat_history, self.tools = await self.get_agent_requirements()
-            # Set up and run agent
-            self.set(
-                llm=llm_model,
-                tools=self.tools or [],
-                chat_history=self.chat_history,
-                input_value=self.input_value,
-                system_prompt=self.system_prompt,
-            )
-            agent = self.create_agent_runnable()
-            result = await self.run_agent(agent)
-
-            # Store result for potential JSON output
-            self._agent_result = result
-
-        except (ValueError, TypeError, KeyError) as e:
-            await logger.aerror(f"{type(e).__name__}: {e!s}")
-            raise
-        except ExceptionWithMessageError as e:
-            await logger.aerror(f"ExceptionWithMessageError occurred: {e}")
-            raise
-        # Avoid catching blind Exception; let truly unexpected exceptions propagate
-        except Exception as e:
-            await logger.aerror(f"Unexpected error: {e!s}")
-            raise
-        else:
-            return result
 
     def _preprocess_schema(self, schema):
         """Preprocess schema to ensure correct data types for build_model_from_schema."""
