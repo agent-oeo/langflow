@@ -19,7 +19,7 @@ class ComputeScoreComponent(Component):
             name="conversation_history",
             display_name="Conversation History",
             info="The conversation history between the user and the assistant.",
-            input_types=["Message"],
+            input_types=["Data"],
             required=True,
         ),
         MessageInput(
@@ -48,20 +48,41 @@ class ComputeScoreComponent(Component):
             print(msg.sender)
 
 
+    def get_database_hash(self, intermediate_steps: list[Message]) -> str:
+        """Compute the current hash of the in-memory airline database."""
+        from tau_bench.envs.base import consistent_hash, to_hashable
+        from tau_bench.envs.airline.data import load_data
+        from tau_bench.envs.airline.tools import ALL_TOOLS
+        data = load_data()
+
+        tools = ALL_TOOLS
+        terminate_tools = ["transfer_to_human_agent"]
+        tools_map = {tool.get_info()["function"]["name"]: tool for tool in tools}
+        tools_info = [tool.get_info() for tool in tools]
+        import json
+        for step in intermediate_steps:
+            action = json.loads(step.text)
+            if action['tool'] not in terminate_tools and action['tool'] in tools_map:
+                _ = tools_map[action['tool']].invoke(data=data, **action['tool_input'])
+        return consistent_hash(to_hashable(data))
+
 
     def evaluate_conversation(self) -> Data:
         """Evaluate the conversation history and return the score."""
         print('evaluate_conversation: Starting evaluation')
-        conversation_history = self.conversation_history
+        conversation_history = self.conversation_history.data["conversation"]
+        intermediate_steps = self.conversation_history.data["intermediate_steps"]
+        database_hash = self.get_database_hash(intermediate_steps)
+        print('database_hash:', database_hash)
         # print('formatted conversation history:', self._format_conversation_history(conversation_history))
         ground_truth_hash = self.ground_truth_message.text
-        actual_hash_str = self.get_actual_hash_str()
-        reward = 1 if actual_hash_str == ground_truth_hash else 0
+        reward = 1 if database_hash == ground_truth_hash else 0
         result_data = {
             "reward": reward,
             "conversation_history": conversation_history,
+            "intermediate_steps": intermediate_steps,
             "ground_truth_hash": ground_truth_hash,
-            "actual_hash_str": actual_hash_str
+            "database_hash": database_hash
         }
         ret = Data(data=result_data)
         print('evaluate_conversation: Result data:', ret)

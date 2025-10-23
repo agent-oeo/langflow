@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import requests
+import json
 from typing import Any
 
 from langchain.agents import AgentExecutor
@@ -116,10 +117,14 @@ class UserSimulatorComponent(Component):
         }
         print(f"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...")
         result = await self.assistant_agent.ainvoke(args)
+        self.intermediate_steps.extend(result["intermediate_steps"])
+        print('-'*50)
+        print('INTERMEDIATE STEPS:', result["intermediate_steps"])
+        print('-'*50)
         print(f"Assistant agent result: {result['output'][:100]}...")
         return Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)
 
-    async def create_conversation(self) -> list[Message]:
+    async def create_conversation(self) -> Data:
         print("Starting conversation simulation")
         # reset the env
         print("Resetting environment via HTTP request")
@@ -134,6 +139,7 @@ class UserSimulatorComponent(Component):
         user_message = await self.call_user_agent([Message(text="Hi! How can I help you today?", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])
         print(f"First user message: {user_message.text[:100]}...")
         self.conversation = [user_message]
+        self.intermediate_steps = []
         
         print(f"Starting conversation loop for {self.max_turns} turns")
         for i in range(self.max_turns):
@@ -150,4 +156,13 @@ class UserSimulatorComponent(Component):
             self.conversation.append(user_message)
 
         print(f"Conversation completed with {len(self.conversation)} total messages")
-        return self.conversation
+
+        # map intermediate steps to json
+        ret_steps = []
+        for step in self.intermediate_steps:
+            ret_steps.append(Message(text=json.dumps({
+                "tool": step[0].tool,
+                "tool_input": step[0].tool_input,
+            }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))
+
+        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps})
