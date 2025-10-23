@@ -56,7 +56,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
     async def ainvoke(self, input, config=None, **kwargs):
         """Async invoke: generate multiple responses and select based on algorithm."""
         # Handle ChatPromptValue objects (they have a messages attribute)
-        if hasattr(input, 'messages'):
+        if hasattr(input, "messages"):
             input = input.messages
 
         # Extract conversation history (0 to n-1) from input if it's a list
@@ -66,8 +66,9 @@ class InferenceTimeScalingWrapper(BaseChatModel):
 
         # Define generator function that converts LangChain responses to Messages
         async def generate_one(input_val):
-            from langchain_core.messages import AIMessage
             import json
+
+            from langchain_core.messages import AIMessage
 
             resp = await self.base_model.ainvoke(input_val, config=config, **kwargs)
 
@@ -78,19 +79,19 @@ class InferenceTimeScalingWrapper(BaseChatModel):
                 # Include only the first tool call for judging
                 if hasattr(resp, "tool_calls") and resp.tool_calls:
                     tc = resp.tool_calls[0]
-                    name = tc.get('name', 'unknown') if isinstance(tc, dict) else getattr(tc, 'name', 'unknown')
-                    args = tc.get('args', {}) if isinstance(tc, dict) else getattr(tc, 'args', {})
+                    name = tc.get("name", "unknown") if isinstance(tc, dict) else getattr(tc, "name", "unknown")
+                    args = tc.get("args", {}) if isinstance(tc, dict) else getattr(tc, "args", {})
                     tool_call_text = f"\n{name}({json.dumps(args, indent=2)})\n"
                     text_content = str(text_content) + tool_call_text
 
                 return Message(text=text_content), resp
-            elif isinstance(resp, Message):
+            if isinstance(resp, Message):
                 return resp, resp
-            else:
-                return Message(text=str(resp)), resp
+            return Message(text=str(resp)), resp
 
         # Use shared ITS algorithm (import needed to avoid circular dependency)
         from lfx.components.logic.inference_time_scaling import InferenceTimeScalingComponent
+
         selected_response, _ = await InferenceTimeScalingComponent._run_its_algorithm(
             algorithm=self.algorithm,
             budget=self.budget,
@@ -283,29 +284,30 @@ class InferenceTimeScalingComponent(LCModelComponent):
             print("Current message:", current_message)
             print("Current message Type:", type(current_message))
             print("Conversation history:", conversation_history)
-            scores = await best_of_n._score_responses(messages, current_message, conversation_history=conversation_history)
+            scores = await best_of_n._score_responses(
+                messages, current_message, conversation_history=conversation_history
+            )
             scored_responses = list(enumerate(scores))
             scored_responses.sort(key=lambda x: x[1], reverse=True)
             selected_index = scored_responses[0][0]
 
             print(f"✅ Best-of-N completed. Selected best response from top {top_n} of {budget} generations\n")
             return responses[selected_index], messages
-        else:
-            # Self-Consistency
-            print(f"\n🚀 Starting Self-Consistency with budget={budget}")
+        # Self-Consistency
+        print(f"\n🚀 Starting Self-Consistency with budget={budget}")
 
-            results = []
-            for _ in range(budget):
-                result = await generate_fn(input_data)
-                results.append(result)
+        results = []
+        for _ in range(budget):
+            result = await generate_fn(input_data)
+            results.append(result)
 
-            messages = [r[0] for r in results]
-            responses = [r[1] for r in results]
+        messages = [r[0] for r in results]
+        responses = [r[1] for r in results]
 
-            selected_idx = random.randint(0, len(responses) - 1)
-            print(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)\n")
+        selected_idx = random.randint(0, len(responses) - 1)
+        print(f"🎲 Randomly selected response {selected_idx + 1}/{len(responses)} (Self-Consistency)\n")
 
-            return responses[selected_idx], messages
+        return responses[selected_idx], messages
 
     def build_model(self) -> LanguageModel:
         """Return the language model wrapped with inference-time scaling.

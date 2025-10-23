@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
@@ -11,6 +10,37 @@ from lfx.schema.message import Message
 
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
+
+DEFAULT_JUDGE_SYSTEM_MESSAGE = """
+You are an expert evaluator. Compare all {num_responses} responses based on the given criteria.
+
+Analyze each response and select the top {top_n} that best meet the criteria.
+
+Provide your evaluation as a JSON object with this exact format:
+{{
+  "reasoning": "Your detailed reasoning explaining why you selected these specific responses, comparing their strengths and weaknesses against the criteria",
+  "selected_indices": [list of exactly {top_n} indices]
+}}
+
+"""
+
+DEFAULT_JUDGE_CRITERIA = """
+Evaluation Criteria:
+1. PROCESS AWARENESS: What stage are we at, and which candidate best advances the workflow towards completion of the user request?
+   - Does the approach match the current stage (planning, data gathering, analysis, completion)?
+   - Is the solution at current stage aligned with fulfiling user's request
+2. STRATEGIC REASONING: 
+   - Early stages: High-level sense of what direction is solution proceeding in, are the steps relevant
+   - Data stages: Make sure the data manipulation or retrieval is done in a correct way based on information provided by the user
+   - Complex requests: Step-by-step solution for complex requests in correct order
+3. TOOL EXECUTION:
+   - Is the tool appropriate for current stage of the process?
+   - Is the tool useful for helping solve user's problem?
+   - Are arguments correctly configured for stated goals or sub-tasks?
+   - Do the steps build logically toward the objective?
+Focus: Which candidate makes the best NEXT STEP toward successfully resolving the user's request?
+"""
+
 
 
 def format_message_with_tool_calls(msg: Message) -> str:
@@ -76,8 +106,10 @@ class BestOfN:
         self.judge_system_message = (
             judge_system_message
             if judge_system_message
-            else "You are an objective response evaluator. Provide only numeric scores in the requested format."
+            else DEFAULT_JUDGE_SYSTEM_MESSAGE
         )
+        self.top_n = 1
+        self.budget = 4
 
     async def ainfer(
         self,
@@ -104,6 +136,9 @@ class BestOfN:
             The best response (if return_response_only=True) or BestOfNResult object
         """
         # Generate responses in parallel
+        
+        self.top_n = top_n
+        self.budget = budget
         tasks = [
             self.get_chat_result_fn(
                 runnable=lm,
@@ -157,21 +192,24 @@ class BestOfN:
         # Extract text from original input
         if isinstance(original_input, Message):
             input_text = original_input.text
-        elif hasattr(original_input, 'content'):
+        elif hasattr(original_input, "content"):
             # LangChain message - extract content
             content = original_input.content
             # If content is a list (multi-modal), extract text
             if isinstance(content, list):
-                content = ' '.join([item.get('text', str(item)) if isinstance(item, dict) else str(item) for item in content])
+                content = " ".join(
+                    [item.get("text", str(item)) if isinstance(item, dict) else str(item) for item in content]
+                )
             input_text = str(content)
 
             # If AI message with tool calls, append tool call info
-            if hasattr(original_input, 'tool_calls') and original_input.tool_calls:
+            if hasattr(original_input, "tool_calls") and original_input.tool_calls:
                 import json
+
                 tool_calls_text = "\n[Tool Calls]:\n"
                 for tc in original_input.tool_calls:
-                    tc_name = tc.get('name', 'unknown') if isinstance(tc, dict) else getattr(tc, 'name', 'unknown')
-                    tc_args = tc.get('args', {}) if isinstance(tc, dict) else getattr(tc, 'args', {})
+                    tc_name = tc.get("name", "unknown") if isinstance(tc, dict) else getattr(tc, "name", "unknown")
+                    tc_args = tc.get("args", {}) if isinstance(tc, dict) else getattr(tc, "args", {})
                     tool_calls_text += f"  - {tc_name}({json.dumps(tc_args)})\n"
                 input_text += tool_calls_text
         else:
@@ -183,39 +221,46 @@ class BestOfN:
             history_context = "\n## Conversation History:\n"
             for msg in conversation_history:
                 # Handle both LangChain messages (content) and Langflow messages (text)
-                if hasattr(msg, 'content'):
+                if hasattr(msg, "content"):
                     # LangChain message - extract content
                     content = msg.content
                     # If content is a list (multi-modal), extract text
                     if isinstance(content, list):
-                        content = ' '.join([item.get('text', str(item)) if isinstance(item, dict) else str(item) for item in content])
+                        content = " ".join(
+                            [item.get("text", str(item)) if isinstance(item, dict) else str(item) for item in content]
+                        )
                     msg_text = str(content)
 
                     # Get role from message type
                     msg_type = type(msg).__name__
-                    if 'System' in msg_type:
+                    if "System" in msg_type:
                         sender = "System"
-                    elif 'Human' in msg_type or 'User' in msg_type:
+                    elif "Human" in msg_type or "User" in msg_type:
                         sender = "User"
-                    elif 'Tool' in msg_type:
+                    elif "Tool" in msg_type:
                         sender = "Tool"
                         # For tool messages, also include tool name if available
-                        if hasattr(msg, 'name') and msg.name:
+                        if hasattr(msg, "name") and msg.name:
                             sender = f"Tool ({msg.name})"
-                    elif 'AI' in msg_type or 'Assistant' in msg_type:
+                    elif "AI" in msg_type or "Assistant" in msg_type:
                         sender = "Assistant"
                         # For AI messages with tool calls, append tool call info
-                        if hasattr(msg, 'tool_calls') and msg.tool_calls:
+                        if hasattr(msg, "tool_calls") and msg.tool_calls:
                             import json
+
                             tool_calls_text = "\n[Tool Calls]:\n"
                             for tc in msg.tool_calls:
-                                tc_name = tc.get('name', 'unknown') if isinstance(tc, dict) else getattr(tc, 'name', 'unknown')
-                                tc_args = tc.get('args', {}) if isinstance(tc, dict) else getattr(tc, 'args', {})
+                                tc_name = (
+                                    tc.get("name", "unknown")
+                                    if isinstance(tc, dict)
+                                    else getattr(tc, "name", "unknown")
+                                )
+                                tc_args = tc.get("args", {}) if isinstance(tc, dict) else getattr(tc, "args", {})
                                 tool_calls_text += f"  - {tc_name}({json.dumps(tc_args)})\n"
                             msg_text += tool_calls_text
                     else:
                         sender = "Unknown"
-                elif hasattr(msg, 'text'):
+                elif hasattr(msg, "text"):
                     # Langflow Message object
                     msg_text = msg.text
                     sender = getattr(msg, "sender", "Unknown")
@@ -225,22 +270,15 @@ class BestOfN:
 
                 history_context += f"**{sender}**: {msg_text}\n"
             history_context += "\n"
-    
+
         # Build the judge prompt with all responses
         responses_text = ""
-        for i, response in enumerate(responses, 1):
+        for i, response in enumerate(responses):
             formatted_resp = format_message_with_tool_calls(response)
             responses_text += f"\n### Response {i}:\n{formatted_resp}\n"
-
-        judge_prompt = f"""You are an expert evaluator. Your task is to evaluate multiple responses to a message and assign each a quality score from 0-100.
-
-Consider the following criteria:
-- Accuracy and correctness
-- Helpfulness and completeness
-- Clarity and coherence
-- Relevance to the message and conversation context
-
-
+        
+        judge_context = """
+        
 ## Conversation History:
 {history_context}
 
@@ -250,15 +288,11 @@ Consider the following criteria:
 ## Responses to Evaluate:
 {responses_text}
 
-## Instructions:
-Provide a score (0-100) for each response. Output ONLY the scores in this exact format:
-Response 1: [score]
-Response 2: [score]
-Response 3: [score]
-... etc
+"""
 
-Do not include any other text or explanation."""
-
+        judge_prompt = DEFAULT_JUDGE_CRITERIA + judge_context.format(history_context=history_context, 
+                                                                     input_text=input_text,
+                                                                     responses_text=responses_text)
         # Log the judge prompt
         print("\n" + "=" * 80)
         print("2. JUDGE PROMPT")
@@ -270,7 +304,7 @@ Do not include any other text or explanation."""
             runnable=self.judge_llm,
             stream=False,
             input_value=judge_prompt,
-            system_message=self.judge_system_message,
+            system_message=self.judge_system_message.format(num_responses=self.budget, top_n=self.top_n),
         )
 
         # Log the judge response
@@ -280,50 +314,75 @@ Do not include any other text or explanation."""
         print(judge_result.text)
 
         # Parse the scores
-        scores = self._parse_judge_scores(judge_result.text, len(responses))
+        scores = self._parse_judge_scores(judge_result.text, self.budget)
 
         return scores
 
     def _parse_judge_scores(self, judge_text: str, expected_count: int) -> list[float]:
         """Parse scores from judge LLM response.
 
+        Expects JSON format with selected_indices. Converts to scores where
+        selected responses get 100 and others get 0.
+
         Args:
-            judge_text: Raw text from judge LLM
-            expected_count: Expected number of scores
+            judge_text: Raw text from judge LLM (JSON format)
+            expected_count: Expected number of responses
 
         Returns:
-            List of scores (defaults to 0.0 if parsing fails)
+            List of scores (100 for selected, 0 for others)
         """
+        import json
         import re
 
-        scores = []
+        scores = [0.0] * expected_count
 
-        # Try to extract scores in format "Response N: score"
+        try:
+            # Try to parse as JSON
+            # First, try to extract JSON from markdown code blocks
+            json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', judge_text, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(1)
+            else:
+                # Try to find JSON object directly
+                json_match = re.search(r'\{[^{}]*"selected_indices"[^{}]*\}', judge_text, re.DOTALL)
+                if json_match:
+                    json_str = json_match.group(0)
+                else:
+                    json_str = judge_text
+
+            result = json.loads(json_str)
+            selected_indices = result.get("selected_indices", [])
+
+            # Validate indices
+            for idx in selected_indices:
+                if isinstance(idx, int) and 0 <= idx < expected_count:
+                    scores[idx] = 100.0
+                else:
+                    print(f"⚠️ Invalid index {idx} in selected_indices")
+
+            # If we got valid selections, return
+            if any(score > 0 for score in scores):
+                return scores
+
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            print(f"⚠️ Failed to parse JSON from judge response: {e}")
+
+        # Fallback: try old format "Response N: score"
+        print("⚠️ Trying fallback parser for old score format")
         pattern = r"Response\s+\d+:\s*(\d+\.?\d*)"
         matches = re.findall(pattern, judge_text, re.IGNORECASE)
 
         if matches and len(matches) == expected_count:
+            scores = []
             for score_str in matches:
                 try:
                     score = float(score_str)
-                    score = max(0.0, min(100.0, score))  # Normalize to 0-100
+                    score = max(0.0, min(100.0, score))
                     scores.append(score)
                 except ValueError:
                     scores.append(0.0)
-        else:
-            # Fallback: try to extract all numbers
-            all_numbers = re.findall(r"\d+\.?\d*", judge_text)
-            if len(all_numbers) >= expected_count:
-                for i in range(expected_count):
-                    try:
-                        score = float(all_numbers[i])
-                        score = max(0.0, min(100.0, score))
-                        scores.append(score)
-                    except (ValueError, IndexError):
-                        scores.append(0.0)
-            else:
-                # If parsing completely fails, assign equal scores
-                print("⚠️ Failed to parse judge scores, assigning default scores")
-                scores = [50.0] * expected_count
+            return scores
 
-        return scores
+        # Final fallback: assign equal scores
+        print("⚠️ All parsing failed, assigning equal scores to all responses")
+        return [50.0] * expected_count
