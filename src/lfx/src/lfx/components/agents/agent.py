@@ -173,7 +173,6 @@ class AgentComponent(ToolCallingAgentComponent):
     async def build_agent(self):
         try:
             llm_model, self.chat_history, self.tools = await self.get_agent_requirements()
-            # Set up and run agent
             self.set(
                 llm=llm_model,
                 tools=self.tools or [],
@@ -181,19 +180,18 @@ class AgentComponent(ToolCallingAgentComponent):
                 input_value=self.input_value,
                 system_prompt=self.system_prompt,
             )
-            agent = self.create_agent_runnable()
+            agent_executor = super().build_agent()
+            # setattr(agent_executor, "_lfx_default_system_prompt", self.system_prompt)
+            return agent_executor
         except (ValueError, TypeError, KeyError) as e:
             await logger.aerror(f"{type(e).__name__}: {e!s}")
             raise
         except ExceptionWithMessageError as e:
             await logger.aerror(f"ExceptionWithMessageError occurred: {e}")
             raise
-        # Avoid catching blind Exception; let truly unexpected exceptions propagate
         except Exception as e:
             await logger.aerror(f"Unexpected error: {e!s}")
             raise
-        else:
-            return agent
 
     async def get_agent_requirements(self):
         """Get the agent requirements for the agent."""
