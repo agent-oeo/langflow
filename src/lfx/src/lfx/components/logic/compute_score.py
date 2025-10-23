@@ -37,11 +37,21 @@ class ComputeScoreComponent(Component):
 
     def get_actual_hash_str(self) -> str:
         response = requests.get("http://localhost:8001/hash")
-        return response.json()["hash"]
+        hash_data = response.json()
+        hash_str = hash_data["hash"]
+        return hash_str
 
     def evaluate_conversation(self) -> Data:
         """Evaluate the conversation history and return the score."""
         conversation_history = self.conversation_history
         ground_truth_data = self.ground_truth_data
         actual_hash_str = self.get_actual_hash_str()
-        return Data(data={"reward": 1 if actual_hash_str == ground_truth_data['data']['text'] else 0, "conversation_history": conversation_history, "ground_truth_data": ground_truth_data, "actual_hash_str": actual_hash_str})
+        ground_truth_hash = ground_truth_data.data[ground_truth_data.text_key]
+        reward = 1 if actual_hash_str == ground_truth_hash else 0
+        result_data = {
+            "reward": reward,
+            "conversation_history": conversation_history,
+            "ground_truth_hash": ground_truth_hash,
+            "actual_hash_str": actual_hash_str
+        }
+        return Data(data=result_data)
