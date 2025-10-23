@@ -113,6 +113,8 @@ class UserSimulatorComponent(Component):
             assistant_message = await self.call_assistant_agent(self.conversation)
             self.conversation.append(assistant_message)
             user_message = await self.call_user_agent(self.conversation)
+            if user_message.text == "###STOP###":
+                break
             self.conversation.append(user_message)
 
         return self.conversation
