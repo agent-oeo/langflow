@@ -172,7 +172,6 @@ class SimulatorAgentComponent(ToolCallingAgentComponent):
     async def build_agent(self):
         try:
             llm_model, self.chat_history, self.tools = await self.get_agent_requirements()
-            print(self.tools)
             self.set(
                 llm=llm_model,
                 tools=self.tools or [],

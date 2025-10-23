@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import requests
 from typing import Any
 
 from langchain.agents import AgentExecutor
@@ -106,6 +107,10 @@ class UserSimulatorComponent(Component):
         return Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)
 
     async def conversation(self) -> list[Message]:
+        # reset the env
+        response = requests.post("http://localhost:8001/reload")
+        if response.status_code != 200:
+            raise Exception("Failed to reset the env")
         # get first user message
         user_message = await self.call_user_agent([Message(text="Hi! How can I help you today?", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])
         self.conversation = [user_message]
