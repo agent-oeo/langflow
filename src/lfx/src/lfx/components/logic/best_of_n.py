@@ -91,6 +91,7 @@ class BestOfN:
         get_chat_result_fn: Any,
         logger_fn: Any = None,
         judge_system_message: str | None = None,
+        judge_criteria: str | None = None,
     ) -> None:
         """Initialize Best-of-N algorithm.
 
@@ -99,6 +100,7 @@ class BestOfN:
             get_chat_result_fn: Async function to get chat results from a model
             logger_fn: Optional function to log messages to component logs
             judge_system_message: Optional custom system message for the judge. If None, uses default.
+            judge_criteria: Optional custom evaluation criteria for the judge. If None, uses default.
         """
         self.judge_llm = judge_llm
         self.get_chat_result_fn = get_chat_result_fn
@@ -107,6 +109,11 @@ class BestOfN:
             judge_system_message
             if judge_system_message
             else DEFAULT_JUDGE_SYSTEM_MESSAGE
+        )
+        self.judge_criteria = (
+            judge_criteria
+            if judge_criteria
+            else DEFAULT_JUDGE_CRITERIA
         )
         self.top_n = 1
         self.budget = 4
@@ -285,9 +292,10 @@ class BestOfN:
 
 """
 
-        judge_prompt = DEFAULT_JUDGE_CRITERIA + judge_context.format(history_context=history_context, 
-                                                                     input_text=input_text,
-                                                                     responses_text=responses_text)
+        judge_prompt = (
+            f"{self.judge_criteria}\n"
+            f"{judge_context.format(history_context=history_context, input_text=input_text, responses_text=responses_text)}"
+        )
         # Log the judge prompt
         print("\n" + "=" * 80)
         print("2. JUDGE PROMPT")
