@@ -66,11 +66,11 @@ def format_message_with_tool_calls(msg: Message) -> str:
 
 @dataclass
 class BestOfNResult:
-    """Result from Best-of-N algorithm containing responses, scores, and selection."""
+    """Result from Best-of-N algorithm containing responses and selection."""
 
     responses: list[Message]
-    scores: list[float]
     selected_index: int
+    selected_indices: list[int] = None  # All selected indices in order of preference
 
     @property
     def the_one(self) -> Message:
@@ -151,22 +151,17 @@ class BestOfN:
 
         responses = await asyncio.gather(*tasks)
 
-        # Score responses using judge LLM (all at once in a single prompt)
-        scores = await self._score_responses(responses, input_value, conversation_history)
+        # Get judge's selected indices (in order of preference)
+        selected_indices = await self._score_responses(responses, input_value, conversation_history)
 
-        # Select top N responses by score
-        scored_responses = list(enumerate(scores))
-        scored_responses.sort(key=lambda x: x[1], reverse=True)
-        top_indices = [idx for idx, _ in scored_responses[:top_n]]
-
-        # Primary selection is the best one
-        selected_index = top_indices[0]
+        # Use the first (best) selected index
+        selected_index = selected_indices[0]
 
         # Return the result
         result = BestOfNResult(
             responses=responses,
-            scores=scores,
             selected_index=selected_index,
+            selected_indices=selected_indices,
         )
 
         return result.the_one if return_response_only else result
@@ -176,18 +171,18 @@ class BestOfN:
         responses: list[Message],
         original_input: str | Message,
         conversation_history: list[Message] | None = None,
-    ) -> list[float]:
-        """Score responses using the judge LLM.
+    ) -> list[int]:
+        """Select best responses using the judge LLM.
 
         Evaluates all responses in a single judge prompt for consistency.
 
         Args:
-            responses: List of responses to score
+            responses: List of responses to evaluate
             original_input: Original input/question
             conversation_history: Optional conversation history for context
 
         Returns:
-            List of scores (one per response)
+            List of selected indices in order of preference (first is best)
         """
         # Extract text from original input
         if isinstance(original_input, Message):
@@ -313,28 +308,25 @@ class BestOfN:
         print("=" * 80)
         print(judge_result.text)
 
-        # Parse the scores
-        scores = self._parse_judge_scores(judge_result.text, self.budget)
+        # Parse the selected indices from judge
+        selected_indices = self._parse_judge_selection(judge_result.text, self.budget)
 
-        return scores
+        return selected_indices
 
-    def _parse_judge_scores(self, judge_text: str, expected_count: int) -> list[float]:
-        """Parse scores from judge LLM response.
+    def _parse_judge_selection(self, judge_text: str, expected_count: int) -> list[int]:
+        """Parse selected indices from judge LLM response.
 
-        Expects JSON format with selected_indices. Converts to scores where
-        selected responses get 100 and others get 0.
+        Expects JSON format with selected_indices in order of preference.
 
         Args:
             judge_text: Raw text from judge LLM (JSON format)
             expected_count: Expected number of responses
 
         Returns:
-            List of scores (100 for selected, 0 for others)
+            List of selected indices in order (first is best), or [0] as fallback
         """
         import json
         import re
-
-        scores = [0.0] * expected_count
 
         try:
             # Try to parse as JSON
@@ -353,21 +345,22 @@ class BestOfN:
             result = json.loads(json_str)
             selected_indices = result.get("selected_indices", [])
 
-            # Validate indices
+            # Validate and filter indices
+            valid_indices = []
             for idx in selected_indices:
                 if isinstance(idx, int) and 0 <= idx < expected_count:
-                    scores[idx] = 100.0
+                    valid_indices.append(idx)
                 else:
                     print(f"⚠️ Invalid index {idx} in selected_indices")
 
-            # If we got valid selections, return
-            if any(score > 0 for score in scores):
-                return scores
+            # If we got valid selections, return them in order
+            if valid_indices:
+                return valid_indices
 
         except (json.JSONDecodeError, KeyError, ValueError) as e:
             print(f"⚠️ Failed to parse JSON from judge response: {e}")
 
-        # Fallback: try old format "Response N: score"
+        # Fallback: try old format "Response N: score" and pick highest scoring
         print("⚠️ Trying fallback parser for old score format")
         pattern = r"Response\s+\d+:\s*(\d+\.?\d*)"
         matches = re.findall(pattern, judge_text, re.IGNORECASE)
@@ -377,12 +370,15 @@ class BestOfN:
             for score_str in matches:
                 try:
                     score = float(score_str)
-                    score = max(0.0, min(100.0, score))
                     scores.append(score)
                 except ValueError:
                     scores.append(0.0)
-            return scores
 
-        # Final fallback: assign equal scores
-        print("⚠️ All parsing failed, assigning equal scores to all responses")
-        return [50.0] * expected_count
+            # Return index of highest score
+            if scores:
+                best_idx = scores.index(max(scores))
+                return [best_idx]
+
+        # Final fallback: return first response
+        print("⚠️ All parsing failed, defaulting to first response (index 0)")
+        return [0]
