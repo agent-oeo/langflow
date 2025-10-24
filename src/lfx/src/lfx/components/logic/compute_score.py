@@ -50,6 +50,7 @@ class ComputeScoreComponent(Component):
 
     def get_database_hash(self, intermediate_steps: list[Message]) -> str:
         """Compute the current hash of the in-memory airline database."""
+        import json
         from tau_bench.envs.base import consistent_hash, to_hashable
         from tau_bench.envs.airline.data import load_data
         from tau_bench.envs.airline.tools import ALL_TOOLS
@@ -58,13 +59,11 @@ class ComputeScoreComponent(Component):
         tools = ALL_TOOLS
         terminate_tools = ["transfer_to_human_agent"]
         tools_map = {tool.get_info()["function"]["name"]: tool for tool in tools}
-        tools_info = [tool.get_info() for tool in tools]
-        import json
         for step in intermediate_steps:
             action = json.loads(step.text)
             if action['tool'] not in terminate_tools and action['tool'] in tools_map:
                 _ = tools_map[action['tool']].invoke(data=data, **action['tool_input'])
-        return consistent_hash(to_hashable(data))
+        return consistent_hash(to_hashable(data)).strip()
 
 
     def evaluate_conversation(self) -> Data:
@@ -74,8 +73,7 @@ class ComputeScoreComponent(Component):
         intermediate_steps = self.conversation_history.data["intermediate_steps"]
         database_hash = self.get_database_hash(intermediate_steps)
         print('database_hash:', database_hash)
-        # print('formatted conversation history:', self._format_conversation_history(conversation_history))
-        ground_truth_hash = self.ground_truth_message.text
+        ground_truth_hash = self.ground_truth_message.text.strip()
         reward = 1 if database_hash == ground_truth_hash else 0
         result_data = {
             "reward": reward,
@@ -84,6 +82,4 @@ class ComputeScoreComponent(Component):
             "ground_truth_hash": ground_truth_hash,
             "database_hash": database_hash
         }
-        ret = Data(data=result_data)
-        print('evaluate_conversation: Result data:', ret)
         return Data(data=result_data)
