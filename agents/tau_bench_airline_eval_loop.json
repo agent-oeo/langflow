@@ -7,7 +7,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "LoopComponent",
-            "id": "LoopComponent-SmAe8",
+            "id": "LoopComponent-xJEsp",
             "name": "item",
             "output_types": [
               "Data"
@@ -15,19 +15,19 @@
           },
           "targetHandle": {
             "fieldName": "data",
-            "id": "DataOperations-FF1M2",
+            "id": "DataOperations-xyhEJ",
             "inputTypes": [
               "Data"
             ],
             "type": "other"
           }
         },
-        "id": "reactflow__edge-LoopComponent-SmAe8{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}-DataOperations-FF1M2{œfieldNameœ:œdataœ,œidœ:œDataOperations-FF1M2œ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-LoopComponent-xJEsp{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}-DataOperations-xyhEJ{œfieldNameœ:œdataœ,œidœ:œDataOperations-xyhEJœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "LoopComponent-SmAe8",
-        "sourceHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}",
-        "target": "DataOperations-FF1M2",
-        "targetHandle": "{œfieldNameœ:œdataœ,œidœ:œDataOperations-FF1M2œ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}"
+        "source": "LoopComponent-xJEsp",
+        "sourceHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}",
+        "target": "DataOperations-xyhEJ",
+        "targetHandle": "{œfieldNameœ:œdataœ,œidœ:œDataOperations-xyhEJœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -35,7 +35,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "DataOperations",
-            "id": "DataOperations-FF1M2",
+            "id": "DataOperations-xyhEJ",
             "name": "data_output",
             "output_types": [
               "Data"
@@ -43,7 +43,7 @@
           },
           "targetHandle": {
             "fieldName": "input_data",
-            "id": "TypeConverterComponent-r7nm3",
+            "id": "TypeConverterComponent-x31HL",
             "inputTypes": [
               "Message",
               "Data",
@@ -52,12 +52,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-DataOperations-FF1M2{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-FF1M2œ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}-TypeConverterComponent-r7nm3{œfieldNameœ:œinput_dataœ,œidœ:œTypeConverterComponent-r7nm3œ,œinputTypesœ:[œMessageœ,œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-DataOperations-xyhEJ{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-xyhEJœ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}-TypeConverterComponent-x31HL{œfieldNameœ:œinput_dataœ,œidœ:œTypeConverterComponent-x31HLœ,œinputTypesœ:[œMessageœ,œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "DataOperations-FF1M2",
-        "sourceHandle": "{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-FF1M2œ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}",
-        "target": "TypeConverterComponent-r7nm3",
-        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œTypeConverterComponent-r7nm3œ,œinputTypesœ:[œMessageœ,œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
+        "source": "DataOperations-xyhEJ",
+        "sourceHandle": "{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-xyhEJœ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}",
+        "target": "TypeConverterComponent-x31HL",
+        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œTypeConverterComponent-x31HLœ,œinputTypesœ:[œMessageœ,œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -65,7 +65,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "LoopComponent",
-            "id": "LoopComponent-SmAe8",
+            "id": "LoopComponent-xJEsp",
             "name": "item",
             "output_types": [
               "Data"
@@ -73,19 +73,19 @@
           },
           "targetHandle": {
             "fieldName": "data",
-            "id": "DataOperations-TTTkv",
+            "id": "DataOperations-28DZH",
             "inputTypes": [
               "Data"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__LoopComponent-SmAe8{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}-DataOperations-TTTkv{œfieldNameœ:œdataœ,œidœ:œDataOperations-TTTkvœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-LoopComponent-xJEsp{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}-DataOperations-28DZH{œfieldNameœ:œdataœ,œidœ:œDataOperations-28DZHœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "LoopComponent-SmAe8",
-        "sourceHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}",
-        "target": "DataOperations-TTTkv",
-        "targetHandle": "{œfieldNameœ:œdataœ,œidœ:œDataOperations-TTTkvœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}"
+        "source": "LoopComponent-xJEsp",
+        "sourceHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}",
+        "target": "DataOperations-28DZH",
+        "targetHandle": "{œfieldNameœ:œdataœ,œidœ:œDataOperations-28DZHœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -93,7 +93,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ComputeScore",
-            "id": "ComputeScore-IVlpw",
+            "id": "ComputeScore-DLToU",
             "name": "evaluation_result",
             "output_types": [
               "Data"
@@ -101,19 +101,19 @@
           },
           "targetHandle": {
             "dataType": "LoopComponent",
-            "id": "LoopComponent-SmAe8",
+            "id": "LoopComponent-xJEsp",
             "name": "item",
             "output_types": [
               "Data"
             ]
           }
         },
-        "id": "xy-edge__ComputeScore-IVlpw{œdataTypeœ:œComputeScoreœ,œidœ:œComputeScore-IVlpwœ,œnameœ:œevaluation_resultœ,œoutput_typesœ:[œDataœ]}-LoopComponent-SmAe8{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}",
+        "id": "reactflow__edge-ComputeScore-DLToU{œdataTypeœ:œComputeScoreœ,œidœ:œComputeScore-DLToUœ,œnameœ:œevaluation_resultœ,œoutput_typesœ:[œDataœ]}-LoopComponent-xJEsp{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}",
         "selected": false,
-        "source": "ComputeScore-IVlpw",
-        "sourceHandle": "{œdataTypeœ:œComputeScoreœ,œidœ:œComputeScore-IVlpwœ,œnameœ:œevaluation_resultœ,œoutput_typesœ:[œDataœ]}",
-        "target": "LoopComponent-SmAe8",
-        "targetHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}"
+        "source": "ComputeScore-DLToU",
+        "sourceHandle": "{œdataTypeœ:œComputeScoreœ,œidœ:œComputeScore-DLToUœ,œnameœ:œevaluation_resultœ,œoutput_typesœ:[œDataœ]}",
+        "target": "LoopComponent-xJEsp",
+        "targetHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œitemœ,œoutput_typesœ:[œDataœ]}"
       },
       {
         "animated": false,
@@ -121,7 +121,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "TypeConverterComponent",
-            "id": "TypeConverterComponent-r7nm3",
+            "id": "TypeConverterComponent-x31HL",
             "name": "message_output",
             "output_types": [
               "Message"
@@ -129,19 +129,19 @@
           },
           "targetHandle": {
             "fieldName": "task_scenario",
-            "id": "Prompt Template-PCyd9",
+            "id": "Prompt Template-xTdEk",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "xy-edge__TypeConverterComponent-r7nm3{œdataTypeœ:œTypeConverterComponentœ,œidœ:œTypeConverterComponent-r7nm3œ,œnameœ:œmessage_outputœ,œoutput_typesœ:[œMessageœ]}-Prompt Template-PCyd9{œfieldNameœ:œtask_scenarioœ,œidœ:œPrompt Template-PCyd9œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-TypeConverterComponent-x31HL{œdataTypeœ:œTypeConverterComponentœ,œidœ:œTypeConverterComponent-x31HLœ,œnameœ:œmessage_outputœ,œoutput_typesœ:[œMessageœ]}-Prompt Template-xTdEk{œfieldNameœ:œtask_scenarioœ,œidœ:œPrompt Template-xTdEkœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "TypeConverterComponent-r7nm3",
-        "sourceHandle": "{œdataTypeœ:œTypeConverterComponentœ,œidœ:œTypeConverterComponent-r7nm3œ,œnameœ:œmessage_outputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "Prompt Template-PCyd9",
-        "targetHandle": "{œfieldNameœ:œtask_scenarioœ,œidœ:œPrompt Template-PCyd9œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "TypeConverterComponent-x31HL",
+        "sourceHandle": "{œdataTypeœ:œTypeConverterComponentœ,œidœ:œTypeConverterComponent-x31HLœ,œnameœ:œmessage_outputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "Prompt Template-xTdEk",
+        "targetHandle": "{œfieldNameœ:œtask_scenarioœ,œidœ:œPrompt Template-xTdEkœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -149,7 +149,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "MCP",
-            "id": "MCP-cJldD",
+            "id": "MCP-GC2px",
             "name": "component_as_tool",
             "output_types": [
               "Tool"
@@ -157,19 +157,19 @@
           },
           "targetHandle": {
             "fieldName": "tools",
-            "id": "SimulatorAgent-Z8Xrs",
+            "id": "SimulatorAgent-jpql4",
             "inputTypes": [
               "Tool"
             ],
             "type": "other"
           }
         },
-        "id": "reactflow__edge-MCP-cJldD{œdataTypeœ:œMCPœ,œidœ:œMCP-cJldDœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}-SimulatorAgent-Z8Xrs{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-Z8Xrsœ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-MCP-GC2px{œdataTypeœ:œMCPœ,œidœ:œMCP-GC2pxœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}-SimulatorAgent-jpql4{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-jpql4œ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "MCP-cJldD",
-        "sourceHandle": "{œdataTypeœ:œMCPœ,œidœ:œMCP-cJldDœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}",
-        "target": "SimulatorAgent-Z8Xrs",
-        "targetHandle": "{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-Z8Xrsœ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}"
+        "source": "MCP-GC2px",
+        "sourceHandle": "{œdataTypeœ:œMCPœ,œidœ:œMCP-GC2pxœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}",
+        "target": "SimulatorAgent-jpql4",
+        "targetHandle": "{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-jpql4œ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -177,7 +177,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "DataOperations",
-            "id": "DataOperations-TTTkv",
+            "id": "DataOperations-28DZH",
             "name": "data_output",
             "output_types": [
               "Data"
@@ -185,7 +185,7 @@
           },
           "targetHandle": {
             "fieldName": "input_data",
-            "id": "ParserComponent-4zs5Z",
+            "id": "ParserComponent-3gQ8V",
             "inputTypes": [
               "DataFrame",
               "Data"
@@ -193,12 +193,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__DataOperations-TTTkv{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-TTTkvœ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}-ParserComponent-4zs5Z{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-4zs5Zœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-DataOperations-28DZH{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-28DZHœ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}-ParserComponent-3gQ8V{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-3gQ8Vœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "DataOperations-TTTkv",
-        "sourceHandle": "{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-TTTkvœ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}",
-        "target": "ParserComponent-4zs5Z",
-        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-4zs5Zœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}"
+        "source": "DataOperations-28DZH",
+        "sourceHandle": "{œdataTypeœ:œDataOperationsœ,œidœ:œDataOperations-28DZHœ,œnameœ:œdata_outputœ,œoutput_typesœ:[œDataœ]}",
+        "target": "ParserComponent-3gQ8V",
+        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œParserComponent-3gQ8Vœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -206,7 +206,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ParserComponent",
-            "id": "ParserComponent-4zs5Z",
+            "id": "ParserComponent-3gQ8V",
             "name": "parsed_text",
             "output_types": [
               "Message"
@@ -214,19 +214,19 @@
           },
           "targetHandle": {
             "fieldName": "ground_truth_message",
-            "id": "ComputeScore-IVlpw",
+            "id": "ComputeScore-DLToU",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "xy-edge__ParserComponent-4zs5Z{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-4zs5Zœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}-ComputeScore-IVlpw{œfieldNameœ:œground_truth_messageœ,œidœ:œComputeScore-IVlpwœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ParserComponent-3gQ8V{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-3gQ8Vœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}-ComputeScore-DLToU{œfieldNameœ:œground_truth_messageœ,œidœ:œComputeScore-DLToUœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ParserComponent-4zs5Z",
-        "sourceHandle": "{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-4zs5Zœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ComputeScore-IVlpw",
-        "targetHandle": "{œfieldNameœ:œground_truth_messageœ,œidœ:œComputeScore-IVlpwœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ParserComponent-3gQ8V",
+        "sourceHandle": "{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-3gQ8Vœ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ComputeScore-DLToU",
+        "targetHandle": "{œfieldNameœ:œground_truth_messageœ,œidœ:œComputeScore-DLToUœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -234,7 +234,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "LoopComponent",
-            "id": "LoopComponent-SmAe8",
+            "id": "LoopComponent-xJEsp",
             "name": "done",
             "output_types": [
               "DataFrame"
@@ -242,7 +242,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-hmK5i",
+            "id": "ChatOutput-bgGel",
             "inputTypes": [
               "Data",
               "DataFrame",
@@ -251,12 +251,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__LoopComponent-SmAe8{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œdoneœ,œoutput_typesœ:[œDataFrameœ]}-ChatOutput-hmK5i{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-hmK5iœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-LoopComponent-xJEsp{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œdoneœ,œoutput_typesœ:[œDataFrameœ]}-ChatOutput-bgGel{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-bgGelœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "LoopComponent-SmAe8",
-        "sourceHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-SmAe8œ,œnameœ:œdoneœ,œoutput_typesœ:[œDataFrameœ]}",
-        "target": "ChatOutput-hmK5i",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-hmK5iœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "LoopComponent-xJEsp",
+        "sourceHandle": "{œdataTypeœ:œLoopComponentœ,œidœ:œLoopComponent-xJEspœ,œnameœ:œdoneœ,œoutput_typesœ:[œDataFrameœ]}",
+        "target": "ChatOutput-bgGel",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-bgGelœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -264,7 +264,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "SimulatorAgent",
-            "id": "SimulatorAgent-V3zzG",
+            "id": "SimulatorAgent-FdRZq",
             "name": "agent",
             "output_types": [
               "Agent"
@@ -272,19 +272,19 @@
           },
           "targetHandle": {
             "fieldName": "user_agent",
-            "id": "UserSimulator-XJt3o",
+            "id": "UserSimulator-ucpK8",
             "inputTypes": [
               "Agent"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__SimulatorAgent-V3zzG{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-V3zzGœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-XJt3o{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-XJt3oœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-SimulatorAgent-FdRZq{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-FdRZqœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-ucpK8{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-ucpK8œ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "SimulatorAgent-V3zzG",
-        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-V3zzGœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
-        "target": "UserSimulator-XJt3o",
-        "targetHandle": "{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-XJt3oœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
+        "source": "SimulatorAgent-FdRZq",
+        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-FdRZqœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
+        "target": "UserSimulator-ucpK8",
+        "targetHandle": "{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-ucpK8œ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -292,7 +292,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "SimulatorAgent",
-            "id": "SimulatorAgent-Z8Xrs",
+            "id": "SimulatorAgent-jpql4",
             "name": "agent",
             "output_types": [
               "Agent"
@@ -300,19 +300,19 @@
           },
           "targetHandle": {
             "fieldName": "assistant_agent",
-            "id": "UserSimulator-XJt3o",
+            "id": "UserSimulator-ucpK8",
             "inputTypes": [
               "Agent"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__SimulatorAgent-Z8Xrs{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-Z8Xrsœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-XJt3o{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-XJt3oœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-SimulatorAgent-jpql4{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-jpql4œ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-ucpK8{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-ucpK8œ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "SimulatorAgent-Z8Xrs",
-        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-Z8Xrsœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
-        "target": "UserSimulator-XJt3o",
-        "targetHandle": "{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-XJt3oœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
+        "source": "SimulatorAgent-jpql4",
+        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-jpql4œ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
+        "target": "UserSimulator-ucpK8",
+        "targetHandle": "{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-ucpK8œ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -320,7 +320,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "Prompt Template",
-            "id": "Prompt Template-PCyd9",
+            "id": "Prompt Template-xTdEk",
             "name": "prompt",
             "output_types": [
               "Message"
@@ -328,19 +328,19 @@
           },
           "targetHandle": {
             "fieldName": "task_scenario",
-            "id": "UserSimulator-XJt3o",
+            "id": "UserSimulator-ucpK8",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "xy-edge__Prompt Template-PCyd9{œdataTypeœ:œPrompt Templateœ,œidœ:œPrompt Template-PCyd9œ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}-UserSimulator-XJt3o{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-XJt3oœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-Prompt Template-xTdEk{œdataTypeœ:œPrompt Templateœ,œidœ:œPrompt Template-xTdEkœ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}-UserSimulator-ucpK8{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-ucpK8œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "Prompt Template-PCyd9",
-        "sourceHandle": "{œdataTypeœ:œPrompt Templateœ,œidœ:œPrompt Template-PCyd9œ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "UserSimulator-XJt3o",
-        "targetHandle": "{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-XJt3oœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "Prompt Template-xTdEk",
+        "sourceHandle": "{œdataTypeœ:œPrompt Templateœ,œidœ:œPrompt Template-xTdEkœ,œnameœ:œpromptœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "UserSimulator-ucpK8",
+        "targetHandle": "{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-ucpK8œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -348,7 +348,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "UserSimulator",
-            "id": "UserSimulator-XJt3o",
+            "id": "UserSimulator-ucpK8",
             "name": "conversation",
             "output_types": [
               "Data"
@@ -356,19 +356,19 @@
           },
           "targetHandle": {
             "fieldName": "conversation_history",
-            "id": "ComputeScore-IVlpw",
+            "id": "ComputeScore-DLToU",
             "inputTypes": [
               "Data"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__UserSimulator-XJt3o{œdataTypeœ:œUserSimulatorœ,œidœ:œUserSimulator-XJt3oœ,œnameœ:œconversationœ,œoutput_typesœ:[œDataœ]}-ComputeScore-IVlpw{œfieldNameœ:œconversation_historyœ,œidœ:œComputeScore-IVlpwœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-UserSimulator-ucpK8{œdataTypeœ:œUserSimulatorœ,œidœ:œUserSimulator-ucpK8œ,œnameœ:œconversationœ,œoutput_typesœ:[œDataœ]}-ComputeScore-DLToU{œfieldNameœ:œconversation_historyœ,œidœ:œComputeScore-DLToUœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "UserSimulator-XJt3o",
-        "sourceHandle": "{œdataTypeœ:œUserSimulatorœ,œidœ:œUserSimulator-XJt3oœ,œnameœ:œconversationœ,œoutput_typesœ:[œDataœ]}",
-        "target": "ComputeScore-IVlpw",
-        "targetHandle": "{œfieldNameœ:œconversation_historyœ,œidœ:œComputeScore-IVlpwœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}"
+        "source": "UserSimulator-ucpK8",
+        "sourceHandle": "{œdataTypeœ:œUserSimulatorœ,œidœ:œUserSimulator-ucpK8œ,œnameœ:œconversationœ,œoutput_typesœ:[œDataœ]}",
+        "target": "ComputeScore-DLToU",
+        "targetHandle": "{œfieldNameœ:œconversation_historyœ,œidœ:œComputeScore-DLToUœ,œinputTypesœ:[œDataœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -376,7 +376,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "File",
-            "id": "File-vIUSK",
+            "id": "File-grczl",
             "name": "dataframe",
             "output_types": [
               "DataFrame"
@@ -384,25 +384,25 @@
           },
           "targetHandle": {
             "fieldName": "data",
-            "id": "LoopComponent-SmAe8",
+            "id": "LoopComponent-xJEsp",
             "inputTypes": [
               "DataFrame"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__File-vIUSK{œdataTypeœ:œFileœ,œidœ:œFile-vIUSKœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-LoopComponent-SmAe8{œfieldNameœ:œdataœ,œidœ:œLoopComponent-SmAe8œ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
+        "id": "xy-edge__File-grczl{œdataTypeœ:œFileœ,œidœ:œFile-grczlœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-LoopComponent-xJEsp{œfieldNameœ:œdataœ,œidœ:œLoopComponent-xJEspœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "File-vIUSK",
-        "sourceHandle": "{œdataTypeœ:œFileœ,œidœ:œFile-vIUSKœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
-        "target": "LoopComponent-SmAe8",
-        "targetHandle": "{œfieldNameœ:œdataœ,œidœ:œLoopComponent-SmAe8œ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
+        "source": "File-grczl",
+        "sourceHandle": "{œdataTypeœ:œFileœ,œidœ:œFile-grczlœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
+        "target": "LoopComponent-xJEsp",
+        "targetHandle": "{œfieldNameœ:œdataœ,œidœ:œLoopComponent-xJEspœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
       }
     ],
     "nodes": [
       {
         "data": {
-          "id": "File-vIUSK",
+          "id": "File-grczl",
           "node": {
             "base_classes": [
               "Message"
@@ -436,7 +436,7 @@
             "frozen": false,
             "icon": "file-text",
             "key": "File",
-            "last_updated": "2025-10-26T12:45:08.651Z",
+            "last_updated": "2025-10-26T13:18:40.608Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -796,7 +796,7 @@
                   "gz"
                 ],
                 "file_path": [
-                  "aca0d811-dc16-44ca-990e-f978965c18a3/airline_tasks_test_with_gt_hash_demo (2).csv"
+                  "9aecd395-83cf-43f9-a355-a4bf2950a60f/airline_tasks_test_with_gt_hash_demo.csv"
                 ],
                 "info": "Supported file extensions: csv, json, pdf, txt, md, mdx, yaml, yml, xml, html, htm, docx, py, sh, sql, js, ts, tsx, adoc, asciidoc, asc, bmp, dotx, dotm, docm, jpg, jpeg, png, potx, ppsx, pptm, potm, ppsm, pptx, tiff, xls, xlsx, xhtml, webp; optionally bundled in file extensions: zip, tar, tgz, bz2, gz",
                 "list": true,
@@ -901,22 +901,21 @@
           "showNode": true,
           "type": "File"
         },
-        "dragging": false,
-        "id": "File-vIUSK",
+        "id": "File-grczl",
         "measured": {
           "height": 218,
           "width": 320
         },
         "position": {
-          "x": 354.71496993354054,
-          "y": 432.74263108792593
+          "x": 355.99999999999994,
+          "y": 1597.574538666718
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "LoopComponent-SmAe8",
+          "id": "LoopComponent-xJEsp",
           "node": {
             "base_classes": [
               "Data",
@@ -1028,22 +1027,21 @@
           "showNode": true,
           "type": "LoopComponent"
         },
-        "dragging": false,
-        "id": "LoopComponent-SmAe8",
+        "id": "LoopComponent-xJEsp",
         "measured": {
           "height": 242,
           "width": 320
         },
         "position": {
-          "x": 842.1576128075012,
-          "y": 434.9256396718268
+          "x": 843.4426428739607,
+          "y": 1599.7575472506187
         },
         "selected": true,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "DataOperations-FF1M2",
+          "id": "DataOperations-xyhEJ",
           "node": {
             "base_classes": [
               "Data"
@@ -1483,22 +1481,21 @@
           "showNode": false,
           "type": "DataOperations"
         },
-        "dragging": false,
-        "id": "DataOperations-FF1M2",
+        "id": "DataOperations-xyhEJ",
         "measured": {
           "height": 48,
           "width": 192
         },
         "position": {
-          "x": 1320.7253584032744,
-          "y": 226.53222489883896
+          "x": 1322.010388469734,
+          "y": 1391.3641324776308
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "TypeConverterComponent-r7nm3",
+          "id": "TypeConverterComponent-x31HL",
           "node": {
             "base_classes": [
               "Message"
@@ -1643,22 +1640,21 @@
           "showNode": false,
           "type": "TypeConverterComponent"
         },
-        "dragging": false,
-        "id": "TypeConverterComponent-r7nm3",
+        "id": "TypeConverterComponent-x31HL",
         "measured": {
           "height": 48,
           "width": 192
         },
         "position": {
-          "x": 1580.155963619313,
-          "y": 221.45751322161982
+          "x": 1581.4409936857726,
+          "y": 1386.2894208004118
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "Prompt Template-PCyd9",
+          "id": "Prompt Template-xTdEk",
           "node": {
             "base_classes": [
               "Message"
@@ -1814,15 +1810,14 @@
           "showNode": true,
           "type": "Prompt Template"
         },
-        "dragging": false,
-        "id": "Prompt Template-PCyd9",
+        "id": "Prompt Template-xTdEk",
         "measured": {
           "height": 367,
           "width": 320
         },
         "position": {
-          "x": 1959.4161521799024,
-          "y": -35.84375337577179
+          "x": 1960.701182246362,
+          "y": 1128.9881542030203
         },
         "selected": false,
         "type": "genericNode"
@@ -1831,7 +1826,7 @@
         "data": {
           "description": "Define the agent's instructions, then enter a task to complete using tools.",
           "display_name": "Simulator Agent",
-          "id": "SimulatorAgent-V3zzG",
+          "id": "SimulatorAgent-FdRZq",
           "node": {
             "base_classes": [
               "Agent",
@@ -1869,7 +1864,7 @@
             ],
             "frozen": false,
             "icon": "bot",
-            "last_updated": "2025-10-26T12:45:08.652Z",
+            "last_updated": "2025-10-26T13:17:06.210Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -2469,22 +2464,21 @@
           "showNode": true,
           "type": "SimulatorAgent"
         },
-        "dragging": false,
-        "id": "SimulatorAgent-V3zzG",
+        "id": "SimulatorAgent-FdRZq",
         "measured": {
           "height": 594,
           "width": 320
         },
         "position": {
-          "x": 2480.0800502282823,
-          "y": -832.831907578792
+          "x": 2481.365080294742,
+          "y": 332
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "DataOperations-TTTkv",
+          "id": "DataOperations-28DZH",
           "node": {
             "base_classes": [
               "Data"
@@ -2924,15 +2918,14 @@
           "showNode": false,
           "type": "DataOperations"
         },
-        "dragging": false,
-        "id": "DataOperations-TTTkv",
+        "id": "DataOperations-28DZH",
         "measured": {
           "height": 48,
           "width": 192
         },
         "position": {
-          "x": 1514.9043006700722,
-          "y": 613.7123031025166
+          "x": 1516.1893307365317,
+          "y": 1778.5442106813084
         },
         "selected": false,
         "type": "genericNode"
@@ -2941,7 +2934,7 @@
         "data": {
           "description": "Compute the score of a conversation history and the ground truth hash string.",
           "display_name": "Compute Score",
-          "id": "ComputeScore-IVlpw",
+          "id": "ComputeScore-DLToU",
           "node": {
             "base_classes": [
               "Data"
@@ -3075,22 +3068,21 @@
           "showNode": true,
           "type": "ComputeScore"
         },
-        "dragging": false,
-        "id": "ComputeScore-IVlpw",
+        "id": "ComputeScore-DLToU",
         "measured": {
           "height": 264,
           "width": 320
         },
         "position": {
-          "x": 3479.5686265564786,
-          "y": 146.5014649085453
+          "x": 3480.853656622938,
+          "y": 1311.3333724873373
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "MCP-cJldD",
+          "id": "MCP-GC2px",
           "node": {
             "base_classes": [
               "DataFrame"
@@ -3112,7 +3104,7 @@
             "frozen": false,
             "icon": "Mcp",
             "key": "mcp_airline-mcp",
-            "last_updated": "2025-10-26T12:45:08.652Z",
+            "last_updated": "2025-10-26T13:17:06.213Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -3674,15 +3666,14 @@
           "showNode": true,
           "type": "MCP"
         },
-        "dragging": false,
-        "id": "MCP-cJldD",
+        "id": "MCP-GC2px",
         "measured": {
           "height": 340,
           "width": 320
         },
         "position": {
-          "x": 1501.4963487150503,
-          "y": -714.522211457032
+          "x": 1502.7813787815098,
+          "y": 450.30969612176
         },
         "selected": false,
         "type": "genericNode"
@@ -3691,7 +3682,7 @@
         "data": {
           "description": "Define the agent's instructions, then enter a task to complete using tools.",
           "display_name": "Simulator Agent",
-          "id": "SimulatorAgent-Z8Xrs",
+          "id": "SimulatorAgent-jpql4",
           "node": {
             "base_classes": [
               "Agent",
@@ -3729,7 +3720,7 @@
             ],
             "frozen": false,
             "icon": "bot",
-            "last_updated": "2025-10-26T12:45:08.653Z",
+            "last_updated": "2025-10-26T13:17:06.213Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -4362,22 +4353,21 @@
           "showNode": true,
           "type": "SimulatorAgent"
         },
-        "dragging": false,
-        "id": "SimulatorAgent-Z8Xrs",
+        "id": "SimulatorAgent-jpql4",
         "measured": {
           "height": 594,
           "width": 320
         },
         "position": {
-          "x": 1991.099144573069,
-          "y": -806.4252283286631
+          "x": 1992.3841746395283,
+          "y": 358.40667925012883
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "ParserComponent-4zs5Z",
+          "id": "ParserComponent-3gQ8V",
           "node": {
             "base_classes": [
               "Message"
@@ -4547,22 +4537,21 @@
           "showNode": false,
           "type": "ParserComponent"
         },
-        "dragging": false,
-        "id": "ParserComponent-4zs5Z",
+        "id": "ParserComponent-3gQ8V",
         "measured": {
           "height": 48,
           "width": 192
         },
         "position": {
-          "x": 1766.7964477716291,
-          "y": 616.298697408381
+          "x": 1768.0814778380886,
+          "y": 1781.130604987173
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "ChatOutput-hmK5i",
+          "id": "ChatOutput-bgGel",
           "node": {
             "base_classes": [
               "Message"
@@ -4805,22 +4794,21 @@
           "showNode": false,
           "type": "ChatOutput"
         },
-        "dragging": false,
-        "id": "ChatOutput-hmK5i",
+        "id": "ChatOutput-bgGel",
         "measured": {
           "height": 48,
           "width": 192
         },
         "position": {
-          "x": 1460.9051932698903,
-          "y": 1138.7775551726477
+          "x": 1462.1902233363498,
+          "y": 2303.6094627514394
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "UserSimulator-XJt3o",
+          "id": "UserSimulator-ucpK8",
           "node": {
             "base_classes": [
               "Data"
@@ -4828,8 +4816,8 @@
             "beta": true,
             "conditional_paths": [],
             "custom_fields": {},
-            "description": "Feed a task scenario to a user agent, simulate an entire conversation between a user and an assistant",
-            "display_name": "Conversation Simulator",
+            "description": "Feed a task scenario to a user agent, seed the opening message, and facilitate a turn-based exchange with an assistant agent.",
+            "display_name": "User Simulator",
             "documentation": "",
             "edited": false,
             "field_order": [
@@ -4844,7 +4832,7 @@
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
-              "code_hash": "6c487028a9a3",
+              "code_hash": "4ac5ca16a41e",
               "dependencies": {
                 "dependencies": [
                   {
@@ -4866,7 +4854,7 @@
                 ],
                 "total_dependencies": 4
               },
-              "module": "lfx.components.agents.user_simulator.UserSimulatorComponent"
+              "module": "custom_components.user_simulator"
             },
             "minimized": false,
             "output_types": [],
@@ -4878,6 +4866,8 @@
                 "group_outputs": false,
                 "method": "create_conversation",
                 "name": "conversation",
+                "options": null,
+                "required_inputs": null,
                 "selected": "Data",
                 "tool_mode": true,
                 "types": [
@@ -4950,7 +4940,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "from __future__ import annotations\n\nimport requests\nimport json\nfrom typing import Any\n\nfrom langchain.agents import AgentExecutor\n\nfrom langchain_core.messages import AIMessage, BaseMessage, HumanMessage\nfrom lfx.custom.custom_component.component import Component\nfrom lfx.field_typing import RangeSpec\nfrom lfx.io import HandleInput, IntInput, MultilineInput, Output\nfrom lfx.schema.data import Data\nfrom lfx.schema.message import Message\nfrom lfx.utils.constants import (\n    MESSAGE_SENDER_AI,\n    MESSAGE_SENDER_NAME_AI,\n    MESSAGE_SENDER_NAME_USER,\n    MESSAGE_SENDER_USER,\n)\n\n\nclass UserSimulatorComponent(Component):\n    \"\"\"Simulate a scripted user speaking with an assistant agent around a task scenario.\"\"\"\n\n    display_name: str = \"User Simulator\"\n    description: str = (\n        \"Feed a task scenario to a user agent, seed the opening message, \"\n        \"and facilitate a turn-based exchange with an assistant agent.\"\n    )\n    icon = \"Users\"\n    name = \"UserSimulator\"\n    beta = True\n\n    inputs = [\n        HandleInput(\n            name=\"user_agent\",\n            display_name=\"User Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that role-plays the user. Receives the task scenario as its system prompt.\",\n        ),\n        HandleInput(\n            name=\"assistant_agent\",\n            display_name=\"Assistant Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that replies to the simulated user messages.\",\n        ),\n        MultilineInput(\n            name=\"task_scenario\",\n            display_name=\"Task Scenario\",\n            required=True,\n            info=\"Describe the situation or objective guiding the user agent.\",\n        ),\n        MultilineInput(\n            name=\"assistant_system_prompt\",\n            display_name=\"Assistant System Prompt\",\n            required=False,\n            info=\"Optional system prompt for the assistant agent.\",\n        ),\n        IntInput(\n            name=\"max_turns\",\n            display_name=\"Assistant Turns\",\n            value=3,\n            info=\"Maximum number of assistant responses to generate after the greeting.\",\n            range_spec=RangeSpec(min=1, max=50, step_type=\"int\"),\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Conversation\", name=\"conversation\", method=\"create_conversation\"),\n    ]\n\n    def _convert_lfx_message_to_lc_message(self, message: Message) -> BaseMessage:\n        print(f\"Converting LFX message to LC message: {message.text[:50]}...\")\n        if message.sender == MESSAGE_SENDER_USER:\n            print(\"Converting to HumanMessage\")\n            return HumanMessage(content=message.text)\n        else:\n            print(\"Converting to AIMessage\")\n            return AIMessage(content=message.text)\n\n    async def call_user_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling user agent with conversation of {len(conversation)} messages\")\n        # swap sender from user to assistant and vice versa for messages in the conversation\n        swapped_conversation: list[Message] = []\n        for message in conversation:\n            print(f\"Processing message from {message.sender}: {message.text[:30]}...\")\n            if message.sender == MESSAGE_SENDER_USER:\n                print(\"Swapping USER to AI\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n            else:\n                print(\"Swapping AI to USER\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER))\n        \n        print(f\"Swapped conversation has {len(swapped_conversation)} messages\")\n        # call the user agent with the swapped conversation\n        # user agent is AgentExecutor\n        args: dict[str, Any] = {\n            \"system_prompt\": self.task_scenario,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in swapped_conversation[:-1]],\n            \"input\": swapped_conversation[-1].text,\n        }\n        print(f\"Calling user agent with args: system_prompt length={len(self.task_scenario)}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.user_agent.ainvoke(args)\n        print(\"complete user agent result:\", result)\n        # print(f\"User agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)\n\n    async def call_assistant_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling assistant agent with conversation of {len(conversation)} messages\")\n        # call assistant agent with the conversation\n        args: dict[str, Any] = {\n            \"system_prompt\": self.assistant_system_prompt,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],\n            \"input\": conversation[-1].text,\n        }\n        print(f\"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.assistant_agent.ainvoke(args)\n        print(\"complete assistant agent result:\", result)\n        self.intermediate_steps.extend(result[\"intermediate_steps\"])\n        # print(f\"Assistant agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)\n\n    async def create_conversation(self) -> Data:\n        print(\"Starting conversation simulation\")\n        # reset the env\n        print(\"Resetting environment via HTTP request\")\n        response = requests.post(\"http://localhost:8001/reload\")\n        if response.status_code != 200:\n            print(f\"Failed to reset env, status code: {response.status_code}\")\n            raise Exception(\"Failed to reset the env\")\n        print(\"Environment reset successful\")\n        \n        # get first user message\n        print(\"Getting first user message\")\n        user_message = await self.call_user_agent([Message(text=\"Hi! How can I help you today?\", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])\n        print(f\"First user message: {user_message.text[:100]}...\")\n        self.conversation = [user_message]\n        self.intermediate_steps = []\n        \n        print(f\"Starting conversation loop for {self.max_turns} turns\")\n        for i in range(self.max_turns):\n            print(f\"Turn {i+1}/{self.max_turns}\")\n            assistant_message = await self.call_assistant_agent(self.conversation)\n            self.conversation.append(assistant_message)\n            \n            user_message = await self.call_user_agent(self.conversation)\n            if user_message.text == \"###STOP###\":\n                print(\"User sent stop signal, ending conversation\")\n                break\n            self.conversation.append(user_message)\n\n        print(f\"Conversation completed with {len(self.conversation)} total messages\")\n\n        # map intermediate steps to json\n        ret_steps = []\n        for step in self.intermediate_steps:\n            ret_steps.append(Message(text=json.dumps({\n                \"tool\": step[0].tool,\n                \"tool_input\": step[0].tool_input,\n            }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n\n        return Data(data={\"conversation\": self.conversation, \"intermediate_steps\": ret_steps})\n"
+                "value": "from __future__ import annotations\n\nimport requests\nimport json\nfrom typing import Any\n\nfrom langchain.agents import AgentExecutor\n\nfrom langchain_core.messages import AIMessage, BaseMessage, HumanMessage\nfrom lfx.custom.custom_component.component import Component\nfrom lfx.field_typing import RangeSpec\nfrom lfx.io import HandleInput, IntInput, MultilineInput, Output\nfrom lfx.schema.data import Data\nfrom lfx.schema.message import Message\nfrom lfx.utils.constants import (\n    MESSAGE_SENDER_AI,\n    MESSAGE_SENDER_NAME_AI,\n    MESSAGE_SENDER_NAME_USER,\n    MESSAGE_SENDER_USER,\n)\n\n\nclass UserSimulatorComponent(Component):\n    \"\"\"Simulate a scripted user speaking with an assistant agent around a task scenario.\"\"\"\n\n    display_name: str = \"User Simulator\"\n    description: str = (\n        \"Feed a task scenario to a user agent, seed the opening message, \"\n        \"and facilitate a turn-based exchange with an assistant agent.\"\n    )\n    icon = \"Users\"\n    name = \"UserSimulator\"\n    beta = True\n\n    inputs = [\n        HandleInput(\n            name=\"user_agent\",\n            display_name=\"User Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that role-plays the user. Receives the task scenario as its system prompt.\",\n        ),\n        HandleInput(\n            name=\"assistant_agent\",\n            display_name=\"Assistant Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that replies to the simulated user messages.\",\n        ),\n        MultilineInput(\n            name=\"task_scenario\",\n            display_name=\"Task Scenario\",\n            required=True,\n            info=\"Describe the situation or objective guiding the user agent.\",\n        ),\n        MultilineInput(\n            name=\"assistant_system_prompt\",\n            display_name=\"Assistant System Prompt\",\n            required=False,\n            info=\"Optional system prompt for the assistant agent.\",\n        ),\n        IntInput(\n            name=\"max_turns\",\n            display_name=\"Assistant Turns\",\n            value=3,\n            info=\"Maximum number of assistant responses to generate after the greeting.\",\n            range_spec=RangeSpec(min=1, max=50, step_type=\"int\"),\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Conversation\", name=\"conversation\", method=\"create_conversation\"),\n    ]\n\n    def _convert_lfx_message_to_lc_message(self, message: Message) -> BaseMessage:\n        print(f\"Converting LFX message to LC message: {message.text[:50]}...\")\n        if message.sender == MESSAGE_SENDER_USER:\n            print(\"Converting to HumanMessage\")\n            return HumanMessage(content=message.text)\n        else:\n            print(\"Converting to AIMessage\")\n            return AIMessage(content=message.text)\n\n    async def call_user_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling user agent with conversation of {len(conversation)} messages\")\n        # swap sender from user to assistant and vice versa for messages in the conversation\n        swapped_conversation: list[Message] = []\n        for message in conversation:\n            print(f\"Processing message from {message.sender}: {message.text[:30]}...\")\n            if message.sender == MESSAGE_SENDER_USER:\n                print(\"Swapping USER to AI\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n            else:\n                print(\"Swapping AI to USER\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER))\n        \n        print(f\"Swapped conversation has {len(swapped_conversation)} messages\")\n        # call the user agent with the swapped conversation\n        # user agent is AgentExecutor\n        args: dict[str, Any] = {\n            \"system_prompt\": self.task_scenario,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in swapped_conversation[:-1]],\n            \"input\": swapped_conversation[-1].text,\n        }\n        print(f\"Calling user agent with args: system_prompt length={len(self.task_scenario)}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.user_agent.ainvoke(args)\n        print(f\"User agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)\n\n    async def call_assistant_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling assistant agent with conversation of {len(conversation)} messages\")\n        # call assistant agent with the conversation\n        args: dict[str, Any] = {\n            \"system_prompt\": self.assistant_system_prompt,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],\n            \"input\": conversation[-1].text,\n        }\n        print(f\"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.assistant_agent.ainvoke(args)\n        self.intermediate_steps.extend(result[\"intermediate_steps\"])\n        print('-'*50)\n        print('INTERMEDIATE STEPS:', result[\"intermediate_steps\"])\n        print('-'*50)\n        print(f\"Assistant agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)\n\n    async def create_conversation(self) -> Data:\n        print(\"Starting conversation simulation\")\n        # reset the env\n        print(\"Resetting environment via HTTP request\")\n        response = requests.post(\"http://localhost:8001/reload\")\n        if response.status_code != 200:\n            print(f\"Failed to reset env, status code: {response.status_code}\")\n            raise Exception(\"Failed to reset the env\")\n        print(\"Environment reset successful\")\n        \n        # get first user message\n        print(\"Getting first user message\")\n        user_message = await self.call_user_agent([Message(text=\"Hi! How can I help you today?\", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])\n        print(f\"First user message: {user_message.text[:100]}...\")\n        self.conversation = [user_message]\n        self.intermediate_steps = []\n        \n        print(f\"Starting conversation loop for {self.max_turns} turns\")\n        for i in range(self.max_turns):\n            print(f\"Turn {i+1}/{self.max_turns}\")\n            assistant_message = await self.call_assistant_agent(self.conversation)\n            print(f\"Assistant response: {assistant_message.text[:100]}...\")\n            self.conversation.append(assistant_message)\n            \n            user_message = await self.call_user_agent(self.conversation)\n            print(f\"User response: {user_message.text[:100]}...\")\n            if user_message.text == \"###STOP###\":\n                print(\"User sent stop signal, ending conversation\")\n                break\n            self.conversation.append(user_message)\n\n        print(f\"Conversation completed with {len(self.conversation)} total messages\")\n\n        # map intermediate steps to json\n        ret_steps = []\n        for step in self.intermediate_steps:\n            ret_steps.append(Message(text=json.dumps({\n                \"tool\": step[0].tool,\n                \"tool_input\": step[0].tool_input,\n            }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n\n        return Data(data={\"conversation\": self.conversation, \"intermediate_steps\": ret_steps})\n"
               },
               "max_turns": {
                 "_input_type": "IntInput",
@@ -4960,6 +4950,7 @@
                 "info": "Maximum number of assistant responses to generate after the greeting.",
                 "list": false,
                 "list_add_label": "Add More",
+                "load_from_db": false,
                 "name": "max_turns",
                 "placeholder": "",
                 "range_spec": {
@@ -5027,31 +5018,30 @@
           "showNode": true,
           "type": "UserSimulator"
         },
-        "dragging": false,
-        "id": "UserSimulator-XJt3o",
+        "id": "UserSimulator-ucpK8",
         "measured": {
           "height": 490,
           "width": 320
         },
         "position": {
-          "x": 2962.205302740711,
-          "y": -346.47168290797066
+          "x": 2963.4903328071705,
+          "y": 818.3602246708213
         },
         "selected": false,
         "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": -323.18141908117263,
-      "y": 321.91439895317785,
-      "zoom": 0.4269356425918887
+      "x": 88.31686515008346,
+      "y": -236.73634097234117,
+      "zoom": 0.42277274374072543
     }
   },
-  "description": "Navigate the Networks of Conversation.",
+  "description": "The Pinnacle of Prompt Generation.",
   "endpoint_name": null,
-  "id": "0463c1cf-b7f5-4741-b39e-7c81ac8b692b",
+  "id": "46107d70-c45e-463f-8984-c970ef7b53bc",
   "is_component": false,
   "last_tested_version": "1.6.4",
-  "name": "tau_bench_airline_eval_loop",
+  "name": "New Flow (2)",
   "tags": []
 }
