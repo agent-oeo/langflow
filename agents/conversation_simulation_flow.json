@@ -7,7 +7,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ChatInput",
-            "id": "ChatInput-zx1ED",
+            "id": "ChatInput-itcbw",
             "name": "message",
             "output_types": [
               "Message"
@@ -15,19 +15,19 @@
           },
           "targetHandle": {
             "fieldName": "task_scenario",
-            "id": "UserSimulator-7Zype",
+            "id": "UserSimulator-jISHN",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "xy-edge__ChatInput-zx1ED{œdataTypeœ:œChatInputœ,œidœ:œChatInput-zx1EDœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-UserSimulator-7Zype{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-7Zypeœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ChatInput-itcbw{œdataTypeœ:œChatInputœ,œidœ:œChatInput-itcbwœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-UserSimulator-jISHN{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-jISHNœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ChatInput-zx1ED",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-zx1EDœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "UserSimulator-7Zype",
-        "targetHandle": "{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-7Zypeœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ChatInput-itcbw",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-itcbwœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "UserSimulator-jISHN",
+        "targetHandle": "{œfieldNameœ:œtask_scenarioœ,œidœ:œUserSimulator-jISHNœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -35,7 +35,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "SimulatorAgent",
-            "id": "SimulatorAgent-uJ6i3",
+            "id": "SimulatorAgent-AJc8h",
             "name": "agent",
             "output_types": [
               "Agent"
@@ -43,19 +43,19 @@
           },
           "targetHandle": {
             "fieldName": "user_agent",
-            "id": "UserSimulator-7Zype",
+            "id": "UserSimulator-jISHN",
             "inputTypes": [
               "Agent"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__SimulatorAgent-uJ6i3{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-uJ6i3œ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-7Zype{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-7Zypeœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-SimulatorAgent-AJc8h{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-AJc8hœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-jISHN{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-jISHNœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "SimulatorAgent-uJ6i3",
-        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-uJ6i3œ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
-        "target": "UserSimulator-7Zype",
-        "targetHandle": "{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-7Zypeœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
+        "source": "SimulatorAgent-AJc8h",
+        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-AJc8hœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
+        "target": "UserSimulator-jISHN",
+        "targetHandle": "{œfieldNameœ:œuser_agentœ,œidœ:œUserSimulator-jISHNœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -63,7 +63,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "PythonREPLComponent",
-            "id": "PythonREPLComponent-ggeMM",
+            "id": "PythonREPLComponent-JisqP",
             "name": "component_as_tool",
             "output_types": [
               "Tool"
@@ -71,19 +71,19 @@
           },
           "targetHandle": {
             "fieldName": "tools",
-            "id": "SimulatorAgent-DqQ3M",
+            "id": "SimulatorAgent-5Y12p",
             "inputTypes": [
               "Tool"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__PythonREPLComponent-ggeMM{œdataTypeœ:œPythonREPLComponentœ,œidœ:œPythonREPLComponent-ggeMMœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}-SimulatorAgent-DqQ3M{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-DqQ3Mœ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-PythonREPLComponent-JisqP{œdataTypeœ:œPythonREPLComponentœ,œidœ:œPythonREPLComponent-JisqPœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}-SimulatorAgent-5Y12p{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-5Y12pœ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "PythonREPLComponent-ggeMM",
-        "sourceHandle": "{œdataTypeœ:œPythonREPLComponentœ,œidœ:œPythonREPLComponent-ggeMMœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}",
-        "target": "SimulatorAgent-DqQ3M",
-        "targetHandle": "{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-DqQ3Mœ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}"
+        "source": "PythonREPLComponent-JisqP",
+        "sourceHandle": "{œdataTypeœ:œPythonREPLComponentœ,œidœ:œPythonREPLComponent-JisqPœ,œnameœ:œcomponent_as_toolœ,œoutput_typesœ:[œToolœ]}",
+        "target": "SimulatorAgent-5Y12p",
+        "targetHandle": "{œfieldNameœ:œtoolsœ,œidœ:œSimulatorAgent-5Y12pœ,œinputTypesœ:[œToolœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -91,7 +91,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "SimulatorAgent",
-            "id": "SimulatorAgent-DqQ3M",
+            "id": "SimulatorAgent-5Y12p",
             "name": "agent",
             "output_types": [
               "Agent"
@@ -99,19 +99,19 @@
           },
           "targetHandle": {
             "fieldName": "assistant_agent",
-            "id": "UserSimulator-7Zype",
+            "id": "UserSimulator-jISHN",
             "inputTypes": [
               "Agent"
             ],
             "type": "other"
           }
         },
-        "id": "xy-edge__SimulatorAgent-DqQ3M{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-DqQ3Mœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-7Zype{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-7Zypeœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-SimulatorAgent-5Y12p{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-5Y12pœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}-UserSimulator-jISHN{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-jISHNœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "SimulatorAgent-DqQ3M",
-        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-DqQ3Mœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
-        "target": "UserSimulator-7Zype",
-        "targetHandle": "{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-7Zypeœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
+        "source": "SimulatorAgent-5Y12p",
+        "sourceHandle": "{œdataTypeœ:œSimulatorAgentœ,œidœ:œSimulatorAgent-5Y12pœ,œnameœ:œagentœ,œoutput_typesœ:[œAgentœ]}",
+        "target": "UserSimulator-jISHN",
+        "targetHandle": "{œfieldNameœ:œassistant_agentœ,œidœ:œUserSimulator-jISHNœ,œinputTypesœ:[œAgentœ],œtypeœ:œotherœ}"
       }
     ],
     "nodes": [
@@ -119,7 +119,7 @@
         "data": {
           "description": "Feed a task scenario to a user agent, seed the opening message, and facilitate a turn-based exchange with an assistant agent.",
           "display_name": "User Simulator",
-          "id": "UserSimulator-7Zype",
+          "id": "UserSimulator-jISHN",
           "node": {
             "base_classes": [
               "Data"
@@ -143,7 +143,7 @@
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
-              "code_hash": "6c487028a9a3",
+              "code_hash": "4ac5ca16a41e",
               "dependencies": {
                 "dependencies": [
                   {
@@ -251,7 +251,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "from __future__ import annotations\n\nimport requests\nimport json\nfrom typing import Any\n\nfrom langchain.agents import AgentExecutor\n\nfrom langchain_core.messages import AIMessage, BaseMessage, HumanMessage\nfrom lfx.custom.custom_component.component import Component\nfrom lfx.field_typing import RangeSpec\nfrom lfx.io import HandleInput, IntInput, MultilineInput, Output\nfrom lfx.schema.data import Data\nfrom lfx.schema.message import Message\nfrom lfx.utils.constants import (\n    MESSAGE_SENDER_AI,\n    MESSAGE_SENDER_NAME_AI,\n    MESSAGE_SENDER_NAME_USER,\n    MESSAGE_SENDER_USER,\n)\n\n\nclass UserSimulatorComponent(Component):\n    \"\"\"Simulate a scripted user speaking with an assistant agent around a task scenario.\"\"\"\n\n    display_name: str = \"User Simulator\"\n    description: str = (\n        \"Feed a task scenario to a user agent, seed the opening message, \"\n        \"and facilitate a turn-based exchange with an assistant agent.\"\n    )\n    icon = \"Users\"\n    name = \"UserSimulator\"\n    beta = True\n\n    inputs = [\n        HandleInput(\n            name=\"user_agent\",\n            display_name=\"User Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that role-plays the user. Receives the task scenario as its system prompt.\",\n        ),\n        HandleInput(\n            name=\"assistant_agent\",\n            display_name=\"Assistant Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that replies to the simulated user messages.\",\n        ),\n        MultilineInput(\n            name=\"task_scenario\",\n            display_name=\"Task Scenario\",\n            required=True,\n            info=\"Describe the situation or objective guiding the user agent.\",\n        ),\n        MultilineInput(\n            name=\"assistant_system_prompt\",\n            display_name=\"Assistant System Prompt\",\n            required=False,\n            info=\"Optional system prompt for the assistant agent.\",\n        ),\n        IntInput(\n            name=\"max_turns\",\n            display_name=\"Assistant Turns\",\n            value=3,\n            info=\"Maximum number of assistant responses to generate after the greeting.\",\n            range_spec=RangeSpec(min=1, max=50, step_type=\"int\"),\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Conversation\", name=\"conversation\", method=\"create_conversation\"),\n    ]\n\n    def _convert_lfx_message_to_lc_message(self, message: Message) -> BaseMessage:\n        print(f\"Converting LFX message to LC message: {message.text[:50]}...\")\n        if message.sender == MESSAGE_SENDER_USER:\n            print(\"Converting to HumanMessage\")\n            return HumanMessage(content=message.text)\n        else:\n            print(\"Converting to AIMessage\")\n            return AIMessage(content=message.text)\n\n    async def call_user_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling user agent with conversation of {len(conversation)} messages\")\n        # swap sender from user to assistant and vice versa for messages in the conversation\n        swapped_conversation: list[Message] = []\n        for message in conversation:\n            print(f\"Processing message from {message.sender}: {message.text[:30]}...\")\n            if message.sender == MESSAGE_SENDER_USER:\n                print(\"Swapping USER to AI\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n            else:\n                print(\"Swapping AI to USER\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER))\n        \n        print(f\"Swapped conversation has {len(swapped_conversation)} messages\")\n        # call the user agent with the swapped conversation\n        # user agent is AgentExecutor\n        args: dict[str, Any] = {\n            \"system_prompt\": self.task_scenario,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in swapped_conversation[:-1]],\n            \"input\": swapped_conversation[-1].text,\n        }\n        print(f\"Calling user agent with args: system_prompt length={len(self.task_scenario)}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.user_agent.ainvoke(args)\n        print(\"complete user agent result:\", result)\n        # print(f\"User agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)\n\n    async def call_assistant_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling assistant agent with conversation of {len(conversation)} messages\")\n        # call assistant agent with the conversation\n        args: dict[str, Any] = {\n            \"system_prompt\": self.assistant_system_prompt,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],\n            \"input\": conversation[-1].text,\n        }\n        print(f\"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.assistant_agent.ainvoke(args)\n        print(\"complete assistant agent result:\", result)\n        self.intermediate_steps.extend(result[\"intermediate_steps\"])\n        # print(f\"Assistant agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)\n\n    async def create_conversation(self) -> Data:\n        print(\"Starting conversation simulation\")\n        # reset the env\n        print(\"Resetting environment via HTTP request\")\n        response = requests.post(\"http://localhost:8001/reload\")\n        if response.status_code != 200:\n            print(f\"Failed to reset env, status code: {response.status_code}\")\n            raise Exception(\"Failed to reset the env\")\n        print(\"Environment reset successful\")\n        \n        # get first user message\n        print(\"Getting first user message\")\n        user_message = await self.call_user_agent([Message(text=\"Hi! How can I help you today?\", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])\n        print(f\"First user message: {user_message.text[:100]}...\")\n        self.conversation = [user_message]\n        self.intermediate_steps = []\n        \n        print(f\"Starting conversation loop for {self.max_turns} turns\")\n        for i in range(self.max_turns):\n            print(f\"Turn {i+1}/{self.max_turns}\")\n            assistant_message = await self.call_assistant_agent(self.conversation)\n            self.conversation.append(assistant_message)\n            \n            user_message = await self.call_user_agent(self.conversation)\n            if user_message.text == \"###STOP###\":\n                print(\"User sent stop signal, ending conversation\")\n                break\n            self.conversation.append(user_message)\n\n        print(f\"Conversation completed with {len(self.conversation)} total messages\")\n\n        # map intermediate steps to json\n        ret_steps = []\n        for step in self.intermediate_steps:\n            ret_steps.append(Message(text=json.dumps({\n                \"tool\": step[0].tool,\n                \"tool_input\": step[0].tool_input,\n            }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n\n        return Data(data={\"conversation\": self.conversation, \"intermediate_steps\": ret_steps})\n"
+                "value": "from __future__ import annotations\n\nimport requests\nimport json\nfrom typing import Any\n\nfrom langchain.agents import AgentExecutor\n\nfrom langchain_core.messages import AIMessage, BaseMessage, HumanMessage\nfrom lfx.custom.custom_component.component import Component\nfrom lfx.field_typing import RangeSpec\nfrom lfx.io import HandleInput, IntInput, MultilineInput, Output\nfrom lfx.schema.data import Data\nfrom lfx.schema.message import Message\nfrom lfx.utils.constants import (\n    MESSAGE_SENDER_AI,\n    MESSAGE_SENDER_NAME_AI,\n    MESSAGE_SENDER_NAME_USER,\n    MESSAGE_SENDER_USER,\n)\n\n\nclass UserSimulatorComponent(Component):\n    \"\"\"Simulate a scripted user speaking with an assistant agent around a task scenario.\"\"\"\n\n    display_name: str = \"User Simulator\"\n    description: str = (\n        \"Feed a task scenario to a user agent, seed the opening message, \"\n        \"and facilitate a turn-based exchange with an assistant agent.\"\n    )\n    icon = \"Users\"\n    name = \"UserSimulator\"\n    beta = True\n\n    inputs = [\n        HandleInput(\n            name=\"user_agent\",\n            display_name=\"User Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that role-plays the user. Receives the task scenario as its system prompt.\",\n        ),\n        HandleInput(\n            name=\"assistant_agent\",\n            display_name=\"Assistant Agent\",\n            input_types=[\"Agent\"],\n            required=True,\n            info=\"Agent that replies to the simulated user messages.\",\n        ),\n        MultilineInput(\n            name=\"task_scenario\",\n            display_name=\"Task Scenario\",\n            required=True,\n            info=\"Describe the situation or objective guiding the user agent.\",\n        ),\n        MultilineInput(\n            name=\"assistant_system_prompt\",\n            display_name=\"Assistant System Prompt\",\n            required=False,\n            info=\"Optional system prompt for the assistant agent.\",\n        ),\n        IntInput(\n            name=\"max_turns\",\n            display_name=\"Assistant Turns\",\n            value=3,\n            info=\"Maximum number of assistant responses to generate after the greeting.\",\n            range_spec=RangeSpec(min=1, max=50, step_type=\"int\"),\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Conversation\", name=\"conversation\", method=\"create_conversation\"),\n    ]\n\n    def _convert_lfx_message_to_lc_message(self, message: Message) -> BaseMessage:\n        print(f\"Converting LFX message to LC message: {message.text[:50]}...\")\n        if message.sender == MESSAGE_SENDER_USER:\n            print(\"Converting to HumanMessage\")\n            return HumanMessage(content=message.text)\n        else:\n            print(\"Converting to AIMessage\")\n            return AIMessage(content=message.text)\n\n    async def call_user_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling user agent with conversation of {len(conversation)} messages\")\n        # swap sender from user to assistant and vice versa for messages in the conversation\n        swapped_conversation: list[Message] = []\n        for message in conversation:\n            print(f\"Processing message from {message.sender}: {message.text[:30]}...\")\n            if message.sender == MESSAGE_SENDER_USER:\n                print(\"Swapping USER to AI\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n            else:\n                print(\"Swapping AI to USER\")\n                swapped_conversation.append(Message(text=message.text, sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER))\n        \n        print(f\"Swapped conversation has {len(swapped_conversation)} messages\")\n        # call the user agent with the swapped conversation\n        # user agent is AgentExecutor\n        args: dict[str, Any] = {\n            \"system_prompt\": self.task_scenario,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in swapped_conversation[:-1]],\n            \"input\": swapped_conversation[-1].text,\n        }\n        print(f\"Calling user agent with args: system_prompt length={len(self.task_scenario)}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.user_agent.ainvoke(args)\n        print(f\"User agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)\n\n    async def call_assistant_agent(self, conversation: list[Message]) -> Message:\n        print(f\"Calling assistant agent with conversation of {len(conversation)} messages\")\n        # call assistant agent with the conversation\n        args: dict[str, Any] = {\n            \"system_prompt\": self.assistant_system_prompt,\n            \"chat_history\": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],\n            \"input\": conversation[-1].text,\n        }\n        print(f\"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...\")\n        result = await self.assistant_agent.ainvoke(args)\n        self.intermediate_steps.extend(result[\"intermediate_steps\"])\n        print('-'*50)\n        print('INTERMEDIATE STEPS:', result[\"intermediate_steps\"])\n        print('-'*50)\n        print(f\"Assistant agent result: {result['output'][:100]}...\")\n        return Message(text=result[\"output\"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)\n\n    async def create_conversation(self) -> Data:\n        print(\"Starting conversation simulation\")\n        # reset the env\n        print(\"Resetting environment via HTTP request\")\n        response = requests.post(\"http://localhost:8001/reload\")\n        if response.status_code != 200:\n            print(f\"Failed to reset env, status code: {response.status_code}\")\n            raise Exception(\"Failed to reset the env\")\n        print(\"Environment reset successful\")\n        \n        # get first user message\n        print(\"Getting first user message\")\n        user_message = await self.call_user_agent([Message(text=\"Hi! How can I help you today?\", sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)])\n        print(f\"First user message: {user_message.text[:100]}...\")\n        self.conversation = [user_message]\n        self.intermediate_steps = []\n        \n        print(f\"Starting conversation loop for {self.max_turns} turns\")\n        for i in range(self.max_turns):\n            print(f\"Turn {i+1}/{self.max_turns}\")\n            assistant_message = await self.call_assistant_agent(self.conversation)\n            print(f\"Assistant response: {assistant_message.text[:100]}...\")\n            self.conversation.append(assistant_message)\n            \n            user_message = await self.call_user_agent(self.conversation)\n            print(f\"User response: {user_message.text[:100]}...\")\n            if user_message.text == \"###STOP###\":\n                print(\"User sent stop signal, ending conversation\")\n                break\n            self.conversation.append(user_message)\n\n        print(f\"Conversation completed with {len(self.conversation)} total messages\")\n\n        # map intermediate steps to json\n        ret_steps = []\n        for step in self.intermediate_steps:\n            ret_steps.append(Message(text=json.dumps({\n                \"tool\": step[0].tool,\n                \"tool_input\": step[0].tool_input,\n            }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))\n\n        return Data(data={\"conversation\": self.conversation, \"intermediate_steps\": ret_steps})\n"
               },
               "max_turns": {
                 "_input_type": "IntInput",
@@ -329,22 +329,21 @@
           "showNode": true,
           "type": "UserSimulator"
         },
-        "dragging": false,
-        "id": "UserSimulator-7Zype",
+        "id": "UserSimulator-jISHN",
         "measured": {
           "height": 490,
           "width": 320
         },
         "position": {
-          "x": 1849.2156960135985,
-          "y": 1090.5198059474928
+          "x": 1624.5552919336226,
+          "y": 1146.9169312186516
         },
-        "selected": false,
+        "selected": true,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "ChatInput-zx1ED",
+          "id": "ChatInput-itcbw",
           "node": {
             "base_classes": [
               "Message"
@@ -583,22 +582,21 @@
           "showNode": true,
           "type": "ChatInput"
         },
-        "dragging": false,
-        "id": "ChatInput-zx1ED",
+        "id": "ChatInput-itcbw",
         "measured": {
           "height": 204,
           "width": 320
         },
         "position": {
-          "x": 1025.689713798036,
-          "y": 1671.7694267770462
+          "x": 801.0293097180602,
+          "y": 1728.166552048205
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "PythonREPLComponent-ggeMM",
+          "id": "PythonREPLComponent-JisqP",
           "node": {
             "base_classes": [
               "Data"
@@ -616,7 +614,7 @@
             ],
             "frozen": false,
             "icon": "square-terminal",
-            "last_updated": "2025-10-26T12:49:21.925Z",
+            "last_updated": "2025-10-26T13:14:18.663Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -766,22 +764,21 @@
           "showNode": true,
           "type": "PythonREPLComponent"
         },
-        "dragging": false,
-        "id": "PythonREPLComponent-ggeMM",
+        "id": "PythonREPLComponent-JisqP",
         "measured": {
           "height": 300,
           "width": 320
         },
         "position": {
-          "x": 487.66040407997593,
-          "y": 1119.219433681953
+          "x": 263,
+          "y": 1175.6165589531117
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "SimulatorAgent-uJ6i3",
+          "id": "SimulatorAgent-AJc8h",
           "node": {
             "base_classes": [
               "Agent",
@@ -819,7 +816,7 @@
             ],
             "frozen": false,
             "icon": "bot",
-            "last_updated": "2025-10-26T12:49:21.926Z",
+            "last_updated": "2025-10-26T13:14:18.665Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -1415,22 +1412,21 @@
           "showNode": true,
           "type": "SimulatorAgent"
         },
-        "dragging": false,
-        "id": "SimulatorAgent-uJ6i3",
+        "id": "SimulatorAgent-AJc8h",
         "measured": {
           "height": 594,
           "width": 320
         },
         "position": {
-          "x": 1050.7112524289055,
-          "y": 183.60287472884116
+          "x": 826.0508483489295,
+          "y": 239.99999999999997
         },
         "selected": false,
         "type": "genericNode"
       },
       {
         "data": {
-          "id": "SimulatorAgent-DqQ3M",
+          "id": "SimulatorAgent-5Y12p",
           "node": {
             "base_classes": [
               "Agent",
@@ -1468,7 +1464,7 @@
             ],
             "frozen": false,
             "icon": "bot",
-            "last_updated": "2025-10-26T12:49:21.928Z",
+            "last_updated": "2025-10-26T13:14:18.666Z",
             "legacy": false,
             "lf_version": "1.6.4",
             "metadata": {
@@ -2064,31 +2060,30 @@
           "showNode": true,
           "type": "SimulatorAgent"
         },
-        "dragging": false,
-        "id": "SimulatorAgent-DqQ3M",
+        "id": "SimulatorAgent-5Y12p",
         "measured": {
           "height": 594,
           "width": 320
         },
         "position": {
-          "x": 1052.324578641939,
-          "y": 895.0797346769149
+          "x": 827.6641745619631,
+          "y": 951.4768599480739
         },
-        "selected": true,
+        "selected": false,
         "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": -379.467305768743,
-      "y": -546.7021452221842,
-      "zoom": 0.6135241772295118
+      "x": -161.85437548488306,
+      "y": -533.4768204272438,
+      "zoom": 0.5917500891210064
     }
   },
-  "description": "Advanced NLP for Groundbreaking Business Solutions.",
+  "description": "Design, Develop, Dialogize.",
   "endpoint_name": null,
-  "id": "3717b457-d05d-4c59-9b6c-11f9f9ed4c86",
+  "id": "a72b51d1-c55c-4de3-948f-a1edcff8992b",
   "is_component": false,
   "last_tested_version": "1.6.4",
-  "name": "conversation_simulation_flow",
+  "name": "newasdfasdf",
   "tags": []
 }
