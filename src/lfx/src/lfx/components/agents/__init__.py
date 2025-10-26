@@ -6,16 +6,20 @@ from lfx.components._importing import import_mod
 
 if TYPE_CHECKING:
     from lfx.components.agents.agent import AgentComponent
+    from lfx.components.agents.simulator_agent import SimulatorAgentComponent
     from lfx.components.agents.cuga_agent import CugaComponent
     from lfx.components.agents.mcp_component import MCPToolsComponent
+    from lfx.components.agents.user_simulator import UserSimulatorComponent
 
 _dynamic_imports = {
     "AgentComponent": "agent",
+    "SimulatorAgentComponent": "simulator_agent",
     "CugaComponent": "cuga_agent",
     "MCPToolsComponent": "mcp_component",
+    "UserSimulatorComponent": "user_simulator",
 }
 
-__all__ = ["AgentComponent", "CugaComponent", "MCPToolsComponent"]
+__all__ = ["AgentComponent", "SimulatorAgentComponent", "CugaComponent", "MCPToolsComponent", "UserSimulatorComponent"]
 
 
 def __getattr__(attr_name: str) -> Any:

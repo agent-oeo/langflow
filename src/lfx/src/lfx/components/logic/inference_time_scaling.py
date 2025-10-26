@@ -24,6 +24,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
     algorithm: str = "Best-of-N"
     judge_llm: Any = None  # Only needed for Best-of-N
     judge_system_message: str | None = None  # Optional custom system message for judge
+    judge_criteria: str | None = None  # Optional custom evaluation criteria for judge
     top_n: int = 1  # Only needed for Best-of-N
     get_chat_result_fn: Any = None  # Function to call the model
     logger_fn: Any = None  # Function to log messages
@@ -62,6 +63,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             top_n=self.top_n,
             judge_llm=self.judge_llm,
             judge_system_message=self.judge_system_message,
+            judge_criteria=self.judge_criteria,
             get_chat_result_fn=self.get_chat_result_fn,
             generate_fn=generate_one,
             input_data=messages,
@@ -119,6 +121,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             top_n=self.top_n,
             judge_llm=self.judge_llm,
             judge_system_message=self.judge_system_message,
+            judge_criteria=self.judge_criteria,
             get_chat_result_fn=self.get_chat_result_fn,
             generate_fn=generate_one,
             input_data=input,
@@ -137,6 +140,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             algorithm=self.algorithm,
             judge_llm=self.judge_llm,
             judge_system_message=self.judge_system_message,
+            judge_criteria=self.judge_criteria,
             top_n=self.top_n,
             get_chat_result_fn=self.get_chat_result_fn,
             logger_fn=self.logger_fn,
@@ -151,6 +155,7 @@ class InferenceTimeScalingWrapper(BaseChatModel):
             algorithm=self.algorithm,
             judge_llm=self.judge_llm,
             judge_system_message=self.judge_system_message,
+            judge_criteria=self.judge_criteria,
             top_n=self.top_n,
             get_chat_result_fn=self.get_chat_result_fn,
             logger_fn=self.logger_fn,
@@ -235,6 +240,13 @@ class InferenceTimeScalingComponent(LCModelComponent):
             advanced=True,
             show=True,  # Shown by default since Best-of-N is default
         ),
+        MultilineInput(
+            name="judge_criteria",
+            display_name="Judge Criteria",
+            info="Custom evaluation criteria for the judge LLM. Leave empty to use the default criteria focusing on process awareness, strategic reasoning, and tool execution.",
+            advanced=True,
+            show=True,  # Shown by default since Best-of-N is default
+        ),
         BoolInput(
             name="stream",
             display_name="Stream",
@@ -256,6 +268,7 @@ class InferenceTimeScalingComponent(LCModelComponent):
         top_n: int,
         judge_llm,
         judge_system_message: str | None,
+        judge_criteria: str | None,
         get_chat_result_fn,
         generate_fn,
         input_data,
@@ -269,6 +282,7 @@ class InferenceTimeScalingComponent(LCModelComponent):
             top_n: Top N responses to consider
             judge_llm: Judge model for scoring responses
             judge_system_message: Custom judge system message
+            judge_criteria: Custom judge evaluation criteria
             get_chat_result_fn: Function to call judge LLM
             generate_fn: Async function that generates a single response
             input_data: Input for generation (varies by context)
@@ -295,6 +309,7 @@ class InferenceTimeScalingComponent(LCModelComponent):
             get_chat_result_fn=get_chat_result_fn,
             logger_fn=None,
             judge_system_message=judge_system_message,
+            judge_criteria=judge_criteria,
         )
 
         # Generate responses in parallel
@@ -335,6 +350,11 @@ class InferenceTimeScalingComponent(LCModelComponent):
         if judge_sys_msg:
             judge_sys_msg = judge_sys_msg.strip()
 
+        # Get custom judge criteria if provided
+        judge_crit = getattr(self, "judge_criteria", None)
+        if judge_crit:
+            judge_crit = judge_crit.strip()
+
         # Wrap the language model with inference-time scaling
         wrapped_model = InferenceTimeScalingWrapper(
             base_model=self.language_model,
@@ -342,6 +362,7 @@ class InferenceTimeScalingComponent(LCModelComponent):
             algorithm=self.algorithm,
             judge_llm=self.judge_llm if self.algorithm == "Best-of-N" else None,
             judge_system_message=judge_sys_msg if judge_sys_msg else None,
+            judge_criteria=judge_crit if judge_crit else None,
             top_n=top_n,
             get_chat_result_fn=self.get_chat_result,
             logger_fn=self.log,
@@ -374,6 +395,11 @@ class InferenceTimeScalingComponent(LCModelComponent):
         if judge_sys_msg:
             judge_sys_msg = judge_sys_msg.strip()
 
+        # Get custom judge criteria if provided
+        judge_crit = getattr(self, "judge_criteria", None)
+        if judge_crit:
+            judge_crit = judge_crit.strip()
+
         # Define generator function for component context
         async def generate_one(_input_data):
             msg = await self.get_chat_result(
@@ -394,6 +420,7 @@ class InferenceTimeScalingComponent(LCModelComponent):
             top_n=top_n,
             judge_llm=self.judge_llm,
             judge_system_message=judge_sys_msg,
+            judge_criteria=judge_crit,
             get_chat_result_fn=self.get_chat_result,
             generate_fn=generate_one,
             input_data=self.input_value,

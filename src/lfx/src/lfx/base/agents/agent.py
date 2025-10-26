@@ -107,6 +107,7 @@ class LCAgentComponent(Component):
         agent_kwargs = {
             "handle_parsing_errors": self.handle_parsing_errors,
             "max_iterations": self.max_iterations,
+            "return_intermediate_steps": True,
         }
         if flatten:
             return {
