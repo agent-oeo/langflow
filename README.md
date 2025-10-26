@@ -27,7 +27,7 @@ The reload port is to reload the database during evaluation.
 You wont have to do it manually when using User Simulation Component.
 You can reload by doing a GET request like follows:
 ```bash
-curl http://localhost:8001/sse
+curl http://localhost:8001/reload
 ```
 
 
