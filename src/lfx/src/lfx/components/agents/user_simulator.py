@@ -127,17 +127,18 @@ class UserSimulatorComponent(Component):
         print(f"Assistant agent result: {result['output'][:100]}...")
         return {
             'message': Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI),
-            'usage': list(cb.usage_metadata.values())[0]
+            'usage': list(cb.usage_metadata.values())[0] if len(cb.usage_metadata) else {}
         }
 
     def add_usage(self, usage_metadata, other):
         if usage_metadata is None: return other
 
-        usage_metadata['input_tokens'] += other['input_tokens']
-        usage_metadata['input_token_details']['cache_read'] += other['input_token_details']['cache_read']
-        usage_metadata['output_tokens'] += other['output_tokens']
-        usage_metadata['total_tokens'] += other['total_tokens']
-        return usage_metadata
+        ret = {'input_token_details': {}}
+        ret['input_tokens'] = usage_metadata.get('input_tokens', 0) + other.get('input_tokens', 0)
+        ret['input_token_details']['cache_read'] = usage_metadata.get('input_token_details', {'cache_read': 0})['cache_read'] + other.get('input_token_details', {'cache_read': 0})['cache_read']
+        ret['output_tokens'] = usage_metadata.get('output_tokens', 0) + other.get('output_tokens', 0)
+        ret['total_tokens'] = usage_metadata.get('total_tokens', 0) + other.get('total_tokens', 0)
+        return ret
 
 
     async def create_conversation(self) -> Data:
@@ -185,4 +186,4 @@ class UserSimulatorComponent(Component):
                 "tool_input": step[0].tool_input,
             }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))
 
-        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps, "usage_metadata": usage_metadata})
+        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps, "assistant_usage_metadata": usage_metadata})
