@@ -20,6 +20,25 @@ from lfx.utils.constants import (
     MESSAGE_SENDER_USER,
 )
 
+from langchain.callbacks.base import BaseCallbackHandler
+import time
+
+class TimingCallback(BaseCallbackHandler):
+    def __init__(self):
+        self._starts = {}
+        self.total_agent_latency = 0.0
+
+    # LLM start/end
+    def on_llm_start(self, serialized, prompts, **kwargs):
+        key = f'llm_{kwargs.get("run_id", "")}'
+        self._starts[key] = time.monotonic()
+
+    def on_llm_end(self, response, **kwargs):
+        key = f'llm_{kwargs.get("run_id", "")}'
+        dt = time.monotonic() - self._starts.pop(key, 0)
+        self.total_agent_latency += dt
+
+
 
 class UserSimulatorComponent(Component):
     """Simulate a scripted user speaking with an assistant agent around a task scenario."""
@@ -109,7 +128,7 @@ class UserSimulatorComponent(Component):
         return Message(text=result["output"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)
 
     async def call_assistant_agent(self, conversation: list[Message]) -> Message:
-        cb = UsageMetadataCallbackHandler()
+        usage_cb, timing_cb = UsageMetadataCallbackHandler(), TimingCallback()
         print(f"Calling assistant agent with conversation of {len(conversation)} messages")
         # call assistant agent with the conversation
         args: dict[str, Any] = {
@@ -117,7 +136,7 @@ class UserSimulatorComponent(Component):
             "chat_history": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],
             "input": conversation[-1].text,
         }
-        config = {"callbacks": [cb]}
+        config = {"callbacks": [usage_cb, timing_cb]}
         print(f"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...")
         result = await self.assistant_agent.ainvoke(args, config=config)
         self.intermediate_steps.extend(result["intermediate_steps"])
@@ -127,7 +146,8 @@ class UserSimulatorComponent(Component):
         print(f"Assistant agent result: {result['output'][:100]}...")
         return {
             'message': Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI),
-            'usage': list(cb.usage_metadata.values())[0] if len(cb.usage_metadata) else {}
+            'usage': list(usage_cb.usage_metadata.values())[0] if len(usage_cb.usage_metadata) else {},
+            'latency': timing_cb.total_agent_latency,
         }
 
     def add_usage(self, usage_metadata, other):
@@ -143,7 +163,7 @@ class UserSimulatorComponent(Component):
 
     async def create_conversation(self) -> Data:
         print("Starting conversation simulation")
-        usage_metadata = None
+        usage_metadata, total_latency = None, 0.0
         # reset the env
         print("Resetting environment via HTTP request")
         try:
@@ -164,10 +184,11 @@ class UserSimulatorComponent(Component):
         for i in range(self.max_turns):
             print(f"Turn {i+1}/{self.max_turns}")
             ret = await self.call_assistant_agent(self.conversation)
-            assistant_message, _ = ret['message'], ret['usage']
+            assistant_message, _usage, _latency = ret['message'], ret['usage'], ret['latency']
             print(f"Assistant response: {assistant_message.text[:100]}...")
             self.conversation.append(assistant_message)
-            usage_metadata = self.add_usage(usage_metadata, _)
+            usage_metadata = self.add_usage(usage_metadata, _usage)
+            total_latency += _latency
             
             user_message = await self.call_user_agent(self.conversation)
             print(f"User response: {user_message.text[:100]}...")
@@ -186,4 +207,4 @@ class UserSimulatorComponent(Component):
                 "tool_input": step[0].tool_input,
             }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))
 
-        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps, "assistant_usage_metadata": usage_metadata})
+        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps, "assistant_usage_metadata": usage_metadata, "assistant_total_latency_secs": total_latency})
