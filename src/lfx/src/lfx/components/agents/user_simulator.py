@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from langchain_core.callbacks import UsageMetadataCallbackHandler
 import requests
 import json
 from typing import Any
@@ -18,6 +19,25 @@ from lfx.utils.constants import (
     MESSAGE_SENDER_NAME_USER,
     MESSAGE_SENDER_USER,
 )
+
+from langchain.callbacks.base import BaseCallbackHandler
+import time
+
+class TimingCallback(BaseCallbackHandler):
+    def __init__(self):
+        self._starts = {}
+        self.total_agent_latency = 0.0
+
+    # LLM start/end
+    def on_llm_start(self, serialized, prompts, **kwargs):
+        key = f'llm_{kwargs.get("run_id", "")}'
+        self._starts[key] = time.monotonic()
+
+    def on_llm_end(self, response, **kwargs):
+        key = f'llm_{kwargs.get("run_id", "")}'
+        dt = time.monotonic() - self._starts.pop(key, 0)
+        self.total_agent_latency += dt
+
 
 
 class UserSimulatorComponent(Component):
@@ -108,6 +128,7 @@ class UserSimulatorComponent(Component):
         return Message(text=result["output"], sender=MESSAGE_SENDER_USER, sender_name=MESSAGE_SENDER_NAME_USER)
 
     async def call_assistant_agent(self, conversation: list[Message]) -> Message:
+        usage_cb, timing_cb = UsageMetadataCallbackHandler(), TimingCallback()
         print(f"Calling assistant agent with conversation of {len(conversation)} messages")
         # call assistant agent with the conversation
         args: dict[str, Any] = {
@@ -115,24 +136,42 @@ class UserSimulatorComponent(Component):
             "chat_history": [self._convert_lfx_message_to_lc_message(message) for message in conversation[:-1]],
             "input": conversation[-1].text,
         }
+        config = {"callbacks": [usage_cb, timing_cb]}
         print(f"Calling assistant agent with args: system_prompt length={len(self.assistant_system_prompt or '')}, chat_history length={len(args['chat_history'])}, input={args['input'][:50]}...")
-        result = await self.assistant_agent.ainvoke(args)
+        result = await self.assistant_agent.ainvoke(args, config=config)
         self.intermediate_steps.extend(result["intermediate_steps"])
         print('-'*50)
         print('INTERMEDIATE STEPS:', result["intermediate_steps"])
         print('-'*50)
         print(f"Assistant agent result: {result['output'][:100]}...")
-        return Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI)
+        return {
+            'message': Message(text=result["output"], sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI),
+            'usage': list(usage_cb.usage_metadata.values())[0] if len(usage_cb.usage_metadata) else {},
+            'latency': timing_cb.total_agent_latency,
+        }
+
+    def add_usage(self, usage_metadata, other):
+        if usage_metadata is None: return other
+
+        ret = {'input_token_details': {}}
+        ret['input_tokens'] = usage_metadata.get('input_tokens', 0) + other.get('input_tokens', 0)
+        ret['input_token_details']['cache_read'] = usage_metadata.get('input_token_details', {'cache_read': 0})['cache_read'] + other.get('input_token_details', {'cache_read': 0})['cache_read']
+        ret['output_tokens'] = usage_metadata.get('output_tokens', 0) + other.get('output_tokens', 0)
+        ret['total_tokens'] = usage_metadata.get('total_tokens', 0) + other.get('total_tokens', 0)
+        return ret
+
 
     async def create_conversation(self) -> Data:
         print("Starting conversation simulation")
+        usage_metadata, total_latency = None, 0.0
         # reset the env
         print("Resetting environment via HTTP request")
-        response = requests.post("http://localhost:8001/reload")
-        if response.status_code != 200:
-            print(f"Failed to reset env, status code: {response.status_code}")
-            raise Exception("Failed to reset the env")
-        print("Environment reset successful")
+        try:
+            response = requests.post("http://localhost:8001/reload")
+            response.raise_for_status()
+            print("Environment reset successful")
+        except Exception as e:
+            print(f"Failed to reset env: {e}")
         
         # get first user message
         print("Getting first user message")
@@ -144,9 +183,12 @@ class UserSimulatorComponent(Component):
         print(f"Starting conversation loop for {self.max_turns} turns")
         for i in range(self.max_turns):
             print(f"Turn {i+1}/{self.max_turns}")
-            assistant_message = await self.call_assistant_agent(self.conversation)
+            ret = await self.call_assistant_agent(self.conversation)
+            assistant_message, _usage, _latency = ret['message'], ret['usage'], ret['latency']
             print(f"Assistant response: {assistant_message.text[:100]}...")
             self.conversation.append(assistant_message)
+            usage_metadata = self.add_usage(usage_metadata, _usage)
+            total_latency += _latency
             
             user_message = await self.call_user_agent(self.conversation)
             print(f"User response: {user_message.text[:100]}...")
@@ -165,4 +207,4 @@ class UserSimulatorComponent(Component):
                 "tool_input": step[0].tool_input,
             }), sender=MESSAGE_SENDER_AI, sender_name=MESSAGE_SENDER_NAME_AI))
 
-        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps})
+        return Data(data={"conversation": self.conversation, "intermediate_steps": ret_steps, "assistant_usage_metadata": usage_metadata, "assistant_total_latency_secs": total_latency})
