@@ -80,6 +80,7 @@ class ComputeScoreComponent(Component):
             "conversation_history": conversation_history,
             "intermediate_steps": intermediate_steps,
             "ground_truth_hash": ground_truth_hash,
-            "database_hash": database_hash
+            "database_hash": database_hash,
+            "assistant_usage_metadata": self.conversation_history.data['assistant_usage_metadata'],
         }
         return Data(data=result_data)
